@@ -1,0 +1,163 @@
+
+12 Content Negotiation
+
+   Most HTTP responses include an entity which contains information for
+   interpretation by a human user. Naturally, it is desirable to supply
+   the user with the "best available" entity corresponding to the
+   request. Unfortunately for servers and caches, not all users have the
+   same preferences for what is "best," and not all user agents are
+   equally capable of rendering all entity types. For that reason, HTTP
+   has provisions for several mechanisms for "content negotiation" --
+   the process of selecting the best representation for a given response
+   when there are multiple representations available.
+
+      Note: This is not called "format negotiation" because the
+      alternate representations may be of the same media type, but use
+      different capabilities of that type, be in different languages,
+      etc.
+
+
+
+
+Fielding, et al.            Standards Track                    [Page 71]
+
+RFC 2616                        HTTP/1.1                       June 1999
+
+
+   Any response containing an entity-body MAY be subject to negotiation,
+   including error responses.
+
+   There are two kinds of content negotiation which are possible in
+   HTTP: server-driven and agent-driven negotiation. These two kinds of
+   negotiation are orthogonal and thus may be used separately or in
+   combination. One method of combination, referred to as transparent
+   negotiation, occurs when a cache uses the agent-driven negotiation
+   information provided by the origin server in order to provide
+   server-driven negotiation for subsequent requests.
+
+12.1 Server-driven Negotiation
+
+   If the selection of the best representation for a response is made by
+   an algorithm located at the server, it is called server-driven
+   negotiation. Selection is based on the available representations of
+   the response (the dimensions over which it can vary; e.g. language,
+   content-coding, etc.) and the contents of particular header fields in
+   the request message or on other information pertaining to the request
+   (such as the network address of the client).
+
+   Server-driven negotiation is advantageous when the algorithm for
+   selecting from among the available representations is difficult to
+   describe to the user agent, or when the server desires to send its
+   "best guess" to the client along with the first response (hoping to
+   avoid the round-trip delay of a subsequent request if the "best
+   guess" is good enough for the user). In order to improve the server's
+   guess, the user agent MAY include request header fields (Accept,
+   Accept-Language, Accept-Encoding, etc.) which describe its
+   preferences for such a response.
+
+   Server-driven negotiation has disadvantages:
+
+      1. It is impossible for the server to accurately determine what
+         might be "best" for any given user, since that would require
+         complete knowledge of both the capabilities of the user agent
+         and the intended use for the response (e.g., does the user want
+         to view it on screen or print it on paper?).
+
+      2. Having the user agent describe its capabilities in every
+         request can be both very inefficient (given that only a small
+         percentage of responses have multiple representations) and a
+         potential violation of the user's privacy.
+
+      3. It complicates the implementation of an origin server and the
+         algorithms for generating responses to a request.
+
+
+
+
+
+Fielding, et al.            Standards Track                    [Page 72]
+
+RFC 2616                        HTTP/1.1                       June 1999
+
+
+      4. It may limit a public cache's ability to use the same response
+         for multiple user's requests.
+
+   HTTP/1.1 includes the following request-header fields for enabling
+   server-driven negotiation through description of user agent
+   capabilities and user preferences: Accept (section 14.1), Accept-
+   Charset (section 14.2), Accept-Encoding (section 14.3), Accept-
+   Language (section 14.4), and User-Agent (section 14.43). However, an
+   origin server is not limited to these dimensions and MAY vary the
+   response based on any aspect of the request, including information
+   outside the request-header fields or within extension header fields
+   not defined by this specification.
+
+   The Vary  header field can be used to express the parameters the
+   server uses to select a representation that is subject to server-
+   driven negotiation. See section 13.6 for use of the Vary header field
+   by caches and section 14.44 for use of the Vary header field by
+   servers.
+
+12.2 Agent-driven Negotiation
+
+   With agent-driven negotiation, selection of the best representation
+   for a response is performed by the user agent after receiving an
+   initial response from the origin server. Selection is based on a list
+   of the available representations of the response included within the
+   header fields or entity-body of the initial response, with each
+   representation identified by its own URI. Selection from among the
+   representations may be performed automatically (if the user agent is
+   capable of doing so) or manually by the user selecting from a
+   generated (possibly hypertext) menu.
+
+   Agent-driven negotiation is advantageous when the response would vary
+   over commonly-used dimensions (such as type, language, or encoding),
+   when the origin server is unable to determine a user agent's
+   capabilities from examining the request, and generally when public
+   caches are used to distribute server load and reduce network usage.
+
+   Agent-driven negotiation suffers from the disadvantage of needing a
+   second request to obtain the best alternate representation. This
+   second request is only efficient when caching is used. In addition,
+   this specification does not define any mechanism for supporting
+   automatic selection, though it also does not prevent any such
+   mechanism from being developed as an extension and used within
+   HTTP/1.1.
+
+
+
+
+
+
+
+Fielding, et al.            Standards Track                    [Page 73]
+
+RFC 2616                        HTTP/1.1                       June 1999
+
+
+   HTTP/1.1 defines the 300 (Multiple Choices) and 406 (Not Acceptable)
+   status codes for enabling agent-driven negotiation when the server is
+   unwilling or unable to provide a varying response using server-driven
+   negotiation.
+
+12.3 Transparent Negotiation
+
+   Transparent negotiation is a combination of both server-driven and
+   agent-driven negotiation. When a cache is supplied with a form of the
+   list of available representations of the response (as in agent-driven
+   negotiation) and the dimensions of variance are completely understood
+   by the cache, then the cache becomes capable of performing server-
+   driven negotiation on behalf of the origin server for subsequent
+   requests on that resource.
+
+   Transparent negotiation has the advantage of distributing the
+   negotiation work that would otherwise be required of the origin
+   server and also removing the second request delay of agent-driven
+   negotiation when the cache is able to correctly guess the right
+   response.
+
+   This specification does not define any mechanism for transparent
+   negotiation, though it also does not prevent any such mechanism from
+   being developed as an extension that could be used within HTTP/1.1.
+

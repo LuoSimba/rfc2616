@@ -1,0 +1,757 @@
+
+3 Protocol Parameters
+
+3.1 HTTP Version
+
+   HTTP uses a "<major>.<minor>" numbering scheme to indicate versions
+   of the protocol. The protocol versioning policy is intended to allow
+   the sender to indicate the format of a message and its capacity for
+   understanding further HTTP communication, rather than the features
+   obtained via that communication. No change is made to the version
+   number for the addition of message components which do not affect
+   communication behavior or which only add to extensible field values.
+   The <minor> number is incremented when the changes made to the
+   protocol add features which do not change the general message parsing
+   algorithm, but which may add to the message semantics and imply
+   additional capabilities of the sender. The <major> number is
+   incremented when the format of a message within the protocol is
+   changed. See RFC 2145 [36] for a fuller explanation.
+
+
+
+Fielding, et al.            Standards Track                    [Page 17]
+
+RFC 2616                        HTTP/1.1                       June 1999
+
+
+   The version of an HTTP message is indicated by an HTTP-Version field
+   in the first line of the message.
+
+       HTTP-Version   = "HTTP" "/" 1*DIGIT "." 1*DIGIT
+
+   Note that the major and minor numbers MUST be treated as separate
+   integers and that each MAY be incremented higher than a single digit.
+   Thus, HTTP/2.4 is a lower version than HTTP/2.13, which in turn is
+   lower than HTTP/12.3. Leading zeros MUST be ignored by recipients and
+   MUST NOT be sent.
+
+   An application that sends a request or response message that includes
+   HTTP-Version of "HTTP/1.1" MUST be at least conditionally compliant
+   with this specification. Applications that are at least conditionally
+   compliant with this specification SHOULD use an HTTP-Version of
+   "HTTP/1.1" in their messages, and MUST do so for any message that is
+   not compatible with HTTP/1.0. For more details on when to send
+   specific HTTP-Version values, see RFC 2145 [36].
+
+   The HTTP version of an application is the highest HTTP version for
+   which the application is at least conditionally compliant.
+
+   Proxy and gateway applications need to be careful when forwarding
+   messages in protocol versions different from that of the application.
+   Since the protocol version indicates the protocol capability of the
+   sender, a proxy/gateway MUST NOT send a message with a version
+   indicator which is greater than its actual version. If a higher
+   version request is received, the proxy/gateway MUST either downgrade
+   the request version, or respond with an error, or switch to tunnel
+   behavior.
+
+   Due to interoperability problems with HTTP/1.0 proxies discovered
+   since the publication of RFC 2068[33], caching proxies MUST, gateways
+   MAY, and tunnels MUST NOT upgrade the request to the highest version
+   they support. The proxy/gateway's response to that request MUST be in
+   the same major version as the request.
+
+      Note: Converting between versions of HTTP may involve modification
+      of header fields required or forbidden by the versions involved.
+
+3.2 Uniform Resource Identifiers
+
+   URIs have been known by many names: WWW addresses, Universal Document
+   Identifiers, Universal Resource Identifiers [3], and finally the
+   combination of Uniform Resource Locators (URL) [4] and Names (URN)
+   [20]. As far as HTTP is concerned, Uniform Resource Identifiers are
+   simply formatted strings which identify--via name, location, or any
+   other characteristic--a resource.
+
+
+
+Fielding, et al.            Standards Track                    [Page 18]
+
+RFC 2616                        HTTP/1.1                       June 1999
+
+
+3.2.1 General Syntax
+
+   URIs in HTTP can be represented in absolute form or relative to some
+   known base URI [11], depending upon the context of their use. The two
+   forms are differentiated by the fact that absolute URIs always begin
+   with a scheme name followed by a colon. For definitive information on
+   URL syntax and semantics, see "Uniform Resource Identifiers (URI):
+   Generic Syntax and Semantics," RFC 2396 [42] (which replaces RFCs
+   1738 [4] and RFC 1808 [11]). This specification adopts the
+   definitions of "URI-reference", "absoluteURI", "relativeURI", "port",
+   "host","abs_path", "rel_path", and "authority" from that
+   specification.
+
+   The HTTP protocol does not place any a priori limit on the length of
+   a URI. Servers MUST be able to handle the URI of any resource they
+   serve, and SHOULD be able to handle URIs of unbounded length if they
+   provide GET-based forms that could generate such URIs. A server
+   SHOULD return 414 (Request-URI Too Long) status if a URI is longer
+   than the server can handle (see section 10.4.15).
+
+      Note: Servers ought to be cautious about depending on URI lengths
+      above 255 bytes, because some older client or proxy
+      implementations might not properly support these lengths.
+
+3.2.2 http URL
+
+   The "http" scheme is used to locate network resources via the HTTP
+   protocol. This section defines the scheme-specific syntax and
+   semantics for http URLs.
+
+   http_URL = "http:" "//" host [ ":" port ] [ abs_path [ "?" query ]]
+
+   If the port is empty or not given, port 80 is assumed. The semantics
+   are that the identified resource is located at the server listening
+   for TCP connections on that port of that host, and the Request-URI
+   for the resource is abs_path (section 5.1.2). The use of IP addresses
+   in URLs SHOULD be avoided whenever possible (see RFC 1900 [24]). If
+   the abs_path is not present in the URL, it MUST be given as "/" when
+   used as a Request-URI for a resource (section 5.1.2). If a proxy
+   receives a host name which is not a fully qualified domain name, it
+   MAY add its domain to the host name it received. If a proxy receives
+   a fully qualified domain name, the proxy MUST NOT change the host
+   name.
+
+
+
+
+
+
+
+
+Fielding, et al.            Standards Track                    [Page 19]
+
+RFC 2616                        HTTP/1.1                       June 1999
+
+
+3.2.3 URI Comparison
+
+   When comparing two URIs to decide if they match or not, a client
+   SHOULD use a case-sensitive octet-by-octet comparison of the entire
+   URIs, with these exceptions:
+
+      - A port that is empty or not given is equivalent to the default
+        port for that URI-reference;
+
+        - Comparisons of host names MUST be case-insensitive;
+
+        - Comparisons of scheme names MUST be case-insensitive;
+
+        - An empty abs_path is equivalent to an abs_path of "/".
+
+   Characters other than those in the "reserved" and "unsafe" sets (see
+   RFC 2396 [42]) are equivalent to their ""%" HEX HEX" encoding.
+
+   For example, the following three URIs are equivalent:
+
+      http://abc.com:80/~smith/home.html
+      http://ABC.com/%7Esmith/home.html
+      http://ABC.com:/%7esmith/home.html
+
+3.3 Date/Time Formats
+
+3.3.1 Full Date
+
+   HTTP applications have historically allowed three different formats
+   for the representation of date/time stamps:
+
+      Sun, 06 Nov 1994 08:49:37 GMT  ; RFC 822, updated by RFC 1123
+      Sunday, 06-Nov-94 08:49:37 GMT ; RFC 850, obsoleted by RFC 1036
+      Sun Nov  6 08:49:37 1994       ; ANSI C's asctime() format
+
+   The first format is preferred as an Internet standard and represents
+   a fixed-length subset of that defined by RFC 1123 [8] (an update to
+   RFC 822 [9]). The second format is in common use, but is based on the
+   obsolete RFC 850 [12] date format and lacks a four-digit year.
+   HTTP/1.1 clients and servers that parse the date value MUST accept
+   all three formats (for compatibility with HTTP/1.0), though they MUST
+   only generate the RFC 1123 format for representing HTTP-date values
+   in header fields. See section 19.3 for further information.
+
+      Note: Recipients of date values are encouraged to be robust in
+      accepting date values that may have been sent by non-HTTP
+      applications, as is sometimes the case when retrieving or posting
+      messages via proxies/gateways to SMTP or NNTP.
+
+
+
+Fielding, et al.            Standards Track                    [Page 20]
+
+RFC 2616                        HTTP/1.1                       June 1999
+
+
+   All HTTP date/time stamps MUST be represented in Greenwich Mean Time
+   (GMT), without exception. For the purposes of HTTP, GMT is exactly
+   equal to UTC (Coordinated Universal Time). This is indicated in the
+   first two formats by the inclusion of "GMT" as the three-letter
+   abbreviation for time zone, and MUST be assumed when reading the
+   asctime format. HTTP-date is case sensitive and MUST NOT include
+   additional LWS beyond that specifically included as SP in the
+   grammar.
+
+       HTTP-date    = rfc1123-date | rfc850-date | asctime-date
+       rfc1123-date = wkday "," SP date1 SP time SP "GMT"
+       rfc850-date  = weekday "," SP date2 SP time SP "GMT"
+       asctime-date = wkday SP date3 SP time SP 4DIGIT
+       date1        = 2DIGIT SP month SP 4DIGIT
+                      ; day month year (e.g., 02 Jun 1982)
+       date2        = 2DIGIT "-" month "-" 2DIGIT
+                      ; day-month-year (e.g., 02-Jun-82)
+       date3        = month SP ( 2DIGIT | ( SP 1DIGIT ))
+                      ; month day (e.g., Jun  2)
+       time         = 2DIGIT ":" 2DIGIT ":" 2DIGIT
+                      ; 00:00:00 - 23:59:59
+       wkday        = "Mon" | "Tue" | "Wed"
+                    | "Thu" | "Fri" | "Sat" | "Sun"
+       weekday      = "Monday" | "Tuesday" | "Wednesday"
+                    | "Thursday" | "Friday" | "Saturday" | "Sunday"
+       month        = "Jan" | "Feb" | "Mar" | "Apr"
+                    | "May" | "Jun" | "Jul" | "Aug"
+                    | "Sep" | "Oct" | "Nov" | "Dec"
+
+      Note: HTTP requirements for the date/time stamp format apply only
+      to their usage within the protocol stream. Clients and servers are
+      not required to use these formats for user presentation, request
+      logging, etc.
+
+3.3.2 Delta Seconds
+
+   Some HTTP header fields allow a time value to be specified as an
+   integer number of seconds, represented in decimal, after the time
+   that the message was received.
+
+       delta-seconds  = 1*DIGIT
+
+3.4 Character Sets
+
+   HTTP uses the same definition of the term "character set" as that
+   described for MIME:
+
+
+
+
+
+Fielding, et al.            Standards Track                    [Page 21]
+
+RFC 2616                        HTTP/1.1                       June 1999
+
+
+   The term "character set" is used in this document to refer to a
+   method used with one or more tables to convert a sequence of octets
+   into a sequence of characters. Note that unconditional conversion in
+   the other direction is not required, in that not all characters may
+   be available in a given character set and a character set may provide
+   more than one sequence of octets to represent a particular character.
+   This definition is intended to allow various kinds of character
+   encoding, from simple single-table mappings such as US-ASCII to
+   complex table switching methods such as those that use ISO-2022's
+   techniques. However, the definition associated with a MIME character
+   set name MUST fully specify the mapping to be performed from octets
+   to characters. In particular, use of external profiling information
+   to determine the exact mapping is not permitted.
+
+      Note: This use of the term "character set" is more commonly
+      referred to as a "character encoding." However, since HTTP and
+      MIME share the same registry, it is important that the terminology
+      also be shared.
+
+   HTTP character sets are identified by case-insensitive tokens. The
+   complete set of tokens is defined by the IANA Character Set registry
+   [19].
+
+       charset = token
+
+   Although HTTP allows an arbitrary token to be used as a charset
+   value, any token that has a predefined value within the IANA
+   Character Set registry [19] MUST represent the character set defined
+   by that registry. Applications SHOULD limit their use of character
+   sets to those defined by the IANA registry.
+
+   Implementors should be aware of IETF character set requirements [38]
+   [41].
+
+3.4.1 Missing Charset
+
+   Some HTTP/1.0 software has interpreted a Content-Type header without
+   charset parameter incorrectly to mean "recipient should guess."
+   Senders wishing to defeat this behavior MAY include a charset
+   parameter even when the charset is ISO-8859-1 and SHOULD do so when
+   it is known that it will not confuse the recipient.
+
+   Unfortunately, some older HTTP/1.0 clients did not deal properly with
+   an explicit charset parameter. HTTP/1.1 recipients MUST respect the
+   charset label provided by the sender; and those user agents that have
+   a provision to "guess" a charset MUST use the charset from the
+
+
+
+
+
+Fielding, et al.            Standards Track                    [Page 22]
+
+RFC 2616                        HTTP/1.1                       June 1999
+
+
+   content-type field if they support that charset, rather than the
+   recipient's preference, when initially displaying a document. See
+   section 3.7.1.
+
+3.5 Content Codings
+
+   Content coding values indicate an encoding transformation that has
+   been or can be applied to an entity. Content codings are primarily
+   used to allow a document to be compressed or otherwise usefully
+   transformed without losing the identity of its underlying media type
+   and without loss of information. Frequently, the entity is stored in
+   coded form, transmitted directly, and only decoded by the recipient.
+
+       content-coding   = token
+
+   All content-coding values are case-insensitive. HTTP/1.1 uses
+   content-coding values in the Accept-Encoding (section 14.3) and
+   Content-Encoding (section 14.11) header fields. Although the value
+   describes the content-coding, what is more important is that it
+   indicates what decoding mechanism will be required to remove the
+   encoding.
+
+   The Internet Assigned Numbers Authority (IANA) acts as a registry for
+   content-coding value tokens. Initially, the registry contains the
+   following tokens:
+
+   gzip An encoding format produced by the file compression program
+        "gzip" (GNU zip) as described in RFC 1952 [25]. This format is a
+        Lempel-Ziv coding (LZ77) with a 32 bit CRC.
+
+   compress
+        The encoding format produced by the common UNIX file compression
+        program "compress". This format is an adaptive Lempel-Ziv-Welch
+        coding (LZW).
+
+        Use of program names for the identification of encoding formats
+        is not desirable and is discouraged for future encodings. Their
+        use here is representative of historical practice, not good
+        design. For compatibility with previous implementations of HTTP,
+        applications SHOULD consider "x-gzip" and "x-compress" to be
+        equivalent to "gzip" and "compress" respectively.
+
+   deflate
+        The "zlib" format defined in RFC 1950 [31] in combination with
+        the "deflate" compression mechanism described in RFC 1951 [29].
+
+
+
+
+
+
+Fielding, et al.            Standards Track                    [Page 23]
+
+RFC 2616                        HTTP/1.1                       June 1999
+
+
+   identity
+        The default (identity) encoding; the use of no transformation
+        whatsoever. This content-coding is used only in the Accept-
+        Encoding header, and SHOULD NOT be used in the Content-Encoding
+        header.
+
+   New content-coding value tokens SHOULD be registered; to allow
+   interoperability between clients and servers, specifications of the
+   content coding algorithms needed to implement a new value SHOULD be
+   publicly available and adequate for independent implementation, and
+   conform to the purpose of content coding defined in this section.
+
+3.6 Transfer Codings
+
+   Transfer-coding values are used to indicate an encoding
+   transformation that has been, can be, or may need to be applied to an
+   entity-body in order to ensure "safe transport" through the network.
+   This differs from a content coding in that the transfer-coding is a
+   property of the message, not of the original entity.
+
+       transfer-coding         = "chunked" | transfer-extension
+       transfer-extension      = token *( ";" parameter )
+
+   Parameters are in  the form of attribute/value pairs.
+
+       parameter               = attribute "=" value
+       attribute               = token
+       value                   = token | quoted-string
+
+   All transfer-coding values are case-insensitive. HTTP/1.1 uses
+   transfer-coding values in the TE header field (section 14.39) and in
+   the Transfer-Encoding header field (section 14.41).
+
+   Whenever a transfer-coding is applied to a message-body, the set of
+   transfer-codings MUST include "chunked", unless the message is
+   terminated by closing the connection. When the "chunked" transfer-
+   coding is used, it MUST be the last transfer-coding applied to the
+   message-body. The "chunked" transfer-coding MUST NOT be applied more
+   than once to a message-body. These rules allow the recipient to
+   determine the transfer-length of the message (section 4.4).
+
+   Transfer-codings are analogous to the Content-Transfer-Encoding
+   values of MIME [7], which were designed to enable safe transport of
+   binary data over a 7-bit transport service. However, safe transport
+   has a different focus for an 8bit-clean transfer protocol. In HTTP,
+   the only unsafe characteristic of message-bodies is the difficulty in
+   determining the exact body length (section 7.2.2), or the desire to
+   encrypt data over a shared transport.
+
+
+
+Fielding, et al.            Standards Track                    [Page 24]
+
+RFC 2616                        HTTP/1.1                       June 1999
+
+
+   The Internet Assigned Numbers Authority (IANA) acts as a registry for
+   transfer-coding value tokens. Initially, the registry contains the
+   following tokens: "chunked" (section 3.6.1), "identity" (section
+   3.6.2), "gzip" (section 3.5), "compress" (section 3.5), and "deflate"
+   (section 3.5).
+
+   New transfer-coding value tokens SHOULD be registered in the same way
+   as new content-coding value tokens (section 3.5).
+
+   A server which receives an entity-body with a transfer-coding it does
+   not understand SHOULD return 501 (Unimplemented), and close the
+   connection. A server MUST NOT send transfer-codings to an HTTP/1.0
+   client.
+
+3.6.1 Chunked Transfer Coding
+
+   The chunked encoding modifies the body of a message in order to
+   transfer it as a series of chunks, each with its own size indicator,
+   followed by an OPTIONAL trailer containing entity-header fields. This
+   allows dynamically produced content to be transferred along with the
+   information necessary for the recipient to verify that it has
+   received the full message.
+
+       Chunked-Body   = *chunk
+                        last-chunk
+                        trailer
+                        CRLF
+
+       chunk          = chunk-size [ chunk-extension ] CRLF
+                        chunk-data CRLF
+       chunk-size     = 1*HEX
+       last-chunk     = 1*("0") [ chunk-extension ] CRLF
+
+       chunk-extension= *( ";" chunk-ext-name [ "=" chunk-ext-val ] )
+       chunk-ext-name = token
+       chunk-ext-val  = token | quoted-string
+       chunk-data     = chunk-size(OCTET)
+       trailer        = *(entity-header CRLF)
+
+   The chunk-size field is a string of hex digits indicating the size of
+   the chunk. The chunked encoding is ended by any chunk whose size is
+   zero, followed by the trailer, which is terminated by an empty line.
+
+   The trailer allows the sender to include additional HTTP header
+   fields at the end of the message. The Trailer header field can be
+   used to indicate which header fields are included in a trailer (see
+   section 14.40).
+
+
+
+
+Fielding, et al.            Standards Track                    [Page 25]
+
+RFC 2616                        HTTP/1.1                       June 1999
+
+
+   A server using chunked transfer-coding in a response MUST NOT use the
+   trailer for any header fields unless at least one of the following is
+   true:
+
+   a)the request included a TE header field that indicates "trailers" is
+     acceptable in the transfer-coding of the  response, as described in
+     section 14.39; or,
+
+   b)the server is the origin server for the response, the trailer
+     fields consist entirely of optional metadata, and the recipient
+     could use the message (in a manner acceptable to the origin server)
+     without receiving this metadata.  In other words, the origin server
+     is willing to accept the possibility that the trailer fields might
+     be silently discarded along the path to the client.
+
+   This requirement prevents an interoperability failure when the
+   message is being received by an HTTP/1.1 (or later) proxy and
+   forwarded to an HTTP/1.0 recipient. It avoids a situation where
+   compliance with the protocol would have necessitated a possibly
+   infinite buffer on the proxy.
+
+   An example process for decoding a Chunked-Body is presented in
+   appendix 19.4.6.
+
+   All HTTP/1.1 applications MUST be able to receive and decode the
+   "chunked" transfer-coding, and MUST ignore chunk-extension extensions
+   they do not understand.
+
+3.7 Media Types
+
+   HTTP uses Internet Media Types [17] in the Content-Type (section
+   14.17) and Accept (section 14.1) header fields in order to provide
+   open and extensible data typing and type negotiation.
+
+       media-type     = type "/" subtype *( ";" parameter )
+       type           = token
+       subtype        = token
+
+   Parameters MAY follow the type/subtype in the form of attribute/value
+   pairs (as defined in section 3.6).
+
+   The type, subtype, and parameter attribute names are case-
+   insensitive. Parameter values might or might not be case-sensitive,
+   depending on the semantics of the parameter name. Linear white space
+   (LWS) MUST NOT be used between the type and subtype, nor between an
+   attribute and its value. The presence or absence of a parameter might
+   be significant to the processing of a media-type, depending on its
+   definition within the media type registry.
+
+
+
+Fielding, et al.            Standards Track                    [Page 26]
+
+RFC 2616                        HTTP/1.1                       June 1999
+
+
+   Note that some older HTTP applications do not recognize media type
+   parameters. When sending data to older HTTP applications,
+   implementations SHOULD only use media type parameters when they are
+   required by that type/subtype definition.
+
+   Media-type values are registered with the Internet Assigned Number
+   Authority (IANA [19]). The media type registration process is
+   outlined in RFC 1590 [17]. Use of non-registered media types is
+   discouraged.
+
+3.7.1 Canonicalization and Text Defaults
+
+   Internet media types are registered with a canonical form. An
+   entity-body transferred via HTTP messages MUST be represented in the
+   appropriate canonical form prior to its transmission except for
+   "text" types, as defined in the next paragraph.
+
+   When in canonical form, media subtypes of the "text" type use CRLF as
+   the text line break. HTTP relaxes this requirement and allows the
+   transport of text media with plain CR or LF alone representing a line
+   break when it is done consistently for an entire entity-body. HTTP
+   applications MUST accept CRLF, bare CR, and bare LF as being
+   representative of a line break in text media received via HTTP. In
+   addition, if the text is represented in a character set that does not
+   use octets 13 and 10 for CR and LF respectively, as is the case for
+   some multi-byte character sets, HTTP allows the use of whatever octet
+   sequences are defined by that character set to represent the
+   equivalent of CR and LF for line breaks. This flexibility regarding
+   line breaks applies only to text media in the entity-body; a bare CR
+   or LF MUST NOT be substituted for CRLF within any of the HTTP control
+   structures (such as header fields and multipart boundaries).
+
+   If an entity-body is encoded with a content-coding, the underlying
+   data MUST be in a form defined above prior to being encoded.
+
+   The "charset" parameter is used with some media types to define the
+   character set (section 3.4) of the data. When no explicit charset
+   parameter is provided by the sender, media subtypes of the "text"
+   type are defined to have a default charset value of "ISO-8859-1" when
+   received via HTTP. Data in character sets other than "ISO-8859-1" or
+   its subsets MUST be labeled with an appropriate charset value. See
+   section 3.4.1 for compatibility problems.
+
+3.7.2 Multipart Types
+
+   MIME provides for a number of "multipart" types -- encapsulations of
+   one or more entities within a single message-body. All multipart
+   types share a common syntax, as defined in section 5.1.1 of RFC 2046
+
+
+
+Fielding, et al.            Standards Track                    [Page 27]
+
+RFC 2616                        HTTP/1.1                       June 1999
+
+
+   [40], and MUST include a boundary parameter as part of the media type
+   value. The message body is itself a protocol element and MUST
+   therefore use only CRLF to represent line breaks between body-parts.
+   Unlike in RFC 2046, the epilogue of any multipart message MUST be
+   empty; HTTP applications MUST NOT transmit the epilogue (even if the
+   original multipart contains an epilogue). These restrictions exist in
+   order to preserve the self-delimiting nature of a multipart message-
+   body, wherein the "end" of the message-body is indicated by the
+   ending multipart boundary.
+
+   In general, HTTP treats a multipart message-body no differently than
+   any other media type: strictly as payload. The one exception is the
+   "multipart/byteranges" type (appendix 19.2) when it appears in a 206
+   (Partial Content) response, which will be interpreted by some HTTP
+   caching mechanisms as described in sections 13.5.4 and 14.16. In all
+   other cases, an HTTP user agent SHOULD follow the same or similar
+   behavior as a MIME user agent would upon receipt of a multipart type.
+   The MIME header fields within each body-part of a multipart message-
+   body do not have any significance to HTTP beyond that defined by
+   their MIME semantics.
+
+   In general, an HTTP user agent SHOULD follow the same or similar
+   behavior as a MIME user agent would upon receipt of a multipart type.
+   If an application receives an unrecognized multipart subtype, the
+   application MUST treat it as being equivalent to "multipart/mixed".
+
+      Note: The "multipart/form-data" type has been specifically defined
+      for carrying form data suitable for processing via the POST
+      request method, as described in RFC 1867 [15].
+
+3.8 Product Tokens
+
+   Product tokens are used to allow communicating applications to
+   identify themselves by software name and version. Most fields using
+   product tokens also allow sub-products which form a significant part
+   of the application to be listed, separated by white space. By
+   convention, the products are listed in order of their significance
+   for identifying the application.
+
+       product         = token ["/" product-version]
+       product-version = token
+
+   Examples:
+
+       User-Agent: CERN-LineMode/2.15 libwww/2.17b3
+       Server: Apache/0.8.4
+
+
+
+
+
+Fielding, et al.            Standards Track                    [Page 28]
+
+RFC 2616                        HTTP/1.1                       June 1999
+
+
+   Product tokens SHOULD be short and to the point. They MUST NOT be
+   used for advertising or other non-essential information. Although any
+   token character MAY appear in a product-version, this token SHOULD
+   only be used for a version identifier (i.e., successive versions of
+   the same product SHOULD only differ in the product-version portion of
+   the product value).
+
+3.9 Quality Values
+
+   HTTP content negotiation (section 12) uses short "floating point"
+   numbers to indicate the relative importance ("weight") of various
+   negotiable parameters.  A weight is normalized to a real number in
+   the range 0 through 1, where 0 is the minimum and 1 the maximum
+   value. If a parameter has a quality value of 0, then content with
+   this parameter is `not acceptable' for the client. HTTP/1.1
+   applications MUST NOT generate more than three digits after the
+   decimal point. User configuration of these values SHOULD also be
+   limited in this fashion.
+
+       qvalue         = ( "0" [ "." 0*3DIGIT ] )
+                      | ( "1" [ "." 0*3("0") ] )
+
+   "Quality values" is a misnomer, since these values merely represent
+   relative degradation in desired quality.
+
+3.10 Language Tags
+
+   A language tag identifies a natural language spoken, written, or
+   otherwise conveyed by human beings for communication of information
+   to other human beings. Computer languages are explicitly excluded.
+   HTTP uses language tags within the Accept-Language and Content-
+   Language fields.
+
+   The syntax and registry of HTTP language tags is the same as that
+   defined by RFC 1766 [1]. In summary, a language tag is composed of 1
+   or more parts: A primary language tag and a possibly empty series of
+   subtags:
+
+        language-tag  = primary-tag *( "-" subtag )
+        primary-tag   = 1*8ALPHA
+        subtag        = 1*8ALPHA
+
+   White space is not allowed within the tag and all tags are case-
+   insensitive. The name space of language tags is administered by the
+   IANA. Example tags include:
+
+       en, en-US, en-cockney, i-cherokee, x-pig-latin
+
+
+
+
+Fielding, et al.            Standards Track                    [Page 29]
+
+RFC 2616                        HTTP/1.1                       June 1999
+
+
+   where any two-letter primary-tag is an ISO-639 language abbreviation
+   and any two-letter initial subtag is an ISO-3166 country code. (The
+   last three tags above are not registered tags; all but the last are
+   examples of tags which could be registered in future.)
+
+3.11 Entity Tags
+
+   Entity tags are used for comparing two or more entities from the same
+   requested resource. HTTP/1.1 uses entity tags in the ETag (section
+   14.19), If-Match (section 14.24), If-None-Match (section 14.26), and
+   If-Range (section 14.27) header fields. The definition of how they
+   are used and compared as cache validators is in section 13.3.3. An
+   entity tag consists of an opaque quoted string, possibly prefixed by
+   a weakness indicator.
+
+      entity-tag = [ weak ] opaque-tag
+      weak       = "W/"
+      opaque-tag = quoted-string
+
+   A "strong entity tag" MAY be shared by two entities of a resource
+   only if they are equivalent by octet equality.
+
+   A "weak entity tag," indicated by the "W/" prefix, MAY be shared by
+   two entities of a resource only if the entities are equivalent and
+   could be substituted for each other with no significant change in
+   semantics. A weak entity tag can only be used for weak comparison.
+
+   An entity tag MUST be unique across all versions of all entities
+   associated with a particular resource. A given entity tag value MAY
+   be used for entities obtained by requests on different URIs. The use
+   of the same entity tag value in conjunction with entities obtained by
+   requests on different URIs does not imply the equivalence of those
+   entities.
+
+3.12 Range Units
+
+   HTTP/1.1 allows a client to request that only part (a range of) the
+   response entity be included within the response. HTTP/1.1 uses range
+   units in the Range (section 14.35) and Content-Range (section 14.16)
+   header fields. An entity can be broken down into subranges according
+   to various structural units.
+
+      range-unit       = bytes-unit | other-range-unit
+      bytes-unit       = "bytes"
+      other-range-unit = token
+
+   The only range unit defined by HTTP/1.1 is "bytes". HTTP/1.1
+   implementations MAY ignore ranges specified using other units.
+
+
+
+Fielding, et al.            Standards Track                    [Page 30]
+
+RFC 2616                        HTTP/1.1                       June 1999
+
+
+   HTTP/1.1 has been designed to allow implementations of applications
+   that do not depend on knowledge of ranges.
+
