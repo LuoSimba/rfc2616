@@ -234,22 +234,15 @@ RFC 2616                        HTTP/1.1                       June 1999
 
        delta-seconds  = 1*DIGIT
 
-3.4 Character Sets
+3.4 Character Sets (字符编码, 字符集)
 
    HTTP uses the same definition of the term "character set" as that
    described for MIME:
 
-
-
-
-
-Fielding, et al.            Standards Track                    [Page 21]
-
-RFC 2616                        HTTP/1.1                       June 1999
-
+   (HTTP 提及的 "字符集" 的概念, 和 MIME 中关于 "字符集" 的定义是一样的)
 
    The term "character set" is used in this document to refer to a
-   method used with one or more tables to convert a sequence of octets
+   method used with one or more tables to convert a sequence of <b>octets</b>
    into a sequence of characters. Note that unconditional conversion in
    the other direction is not required, in that not all characters may
    be available in a given character set and a character set may provide
@@ -258,8 +251,8 @@ RFC 2616                        HTTP/1.1                       June 1999
    encoding, from simple single-table mappings such as US-ASCII to
    complex table switching methods such as those that use ISO-2022's
    techniques. However, the definition associated with a MIME character
-   set name MUST fully specify the mapping to be performed from octets
-   to characters. In particular, use of external profiling information
+   set name <b>MUST</b> fully specify the mapping to be performed from octets
+   to characters. In particular (尤其是), use of external profiling information
    to determine the exact mapping is not permitted.
 
       Note: This use of the term "character set" is more commonly
@@ -267,13 +260,15 @@ RFC 2616                        HTTP/1.1                       June 1999
       MIME share the same registry, it is important that the terminology
       also be shared.
 
+      (字符集, 就是字符的编码方式)
+
    HTTP character sets are identified by case-insensitive tokens. The
    complete set of tokens is defined by the IANA Character Set registry
    [19].
 
        charset = token
 
-   Although HTTP allows an arbitrary token to be used as a charset
+   Although HTTP allows an arbitrary (任意的) token to be used as a charset
    value, any token that has a predefined value within the IANA
    Character Set registry [19] MUST represent the character set defined
    by that registry. Applications SHOULD limit their use of character
@@ -282,10 +277,10 @@ RFC 2616                        HTTP/1.1                       June 1999
    Implementors should be aware of IETF character set requirements [38]
    [41].
 
-3.4.1 Missing Charset
+3.4.1 Missing Charset (未言明字符集的情况怎么办)
 
    Some HTTP/1.0 software has interpreted a Content-Type header without
-   charset parameter incorrectly to mean "recipient should guess."
+   charset parameter incorrectly to mean "recipient(受方,接受者) should guess."
    Senders wishing to defeat this behavior MAY include a charset
    parameter even when the charset is ISO-8859-1 and SHOULD do so when
    it is known that it will not confuse the recipient.
@@ -294,15 +289,6 @@ RFC 2616                        HTTP/1.1                       June 1999
    an explicit charset parameter. HTTP/1.1 recipients MUST respect the
    charset label provided by the sender; and those user agents that have
    a provision to "guess" a charset MUST use the charset from the
-
-
-
-
-
-Fielding, et al.            Standards Track                    [Page 22]
-
-RFC 2616                        HTTP/1.1                       June 1999
-
 
    content-type field if they support that charset, rather than the
    recipient's preference, when initially displaying a document. See
