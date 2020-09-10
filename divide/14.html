@@ -1,12 +1,18 @@
+<meta charset="utf-8">
+<link href="site.css" rel="Stylesheet" type="text/css" />
 
-14 Header Field Definitions
+<h1>第十四章 Header Field Definitions</h1>
 
-   This section defines the syntax and semantics of all standard
+<p class="cn"><strong>首部字段定义</strong></p>
+
+<p class="cn">本章是篇幅最长的一章</p>
+
+<p>This section defines the syntax and semantics of all standard
    HTTP/1.1 header fields. For entity-header fields, both sender and
    recipient refer to either the client or the server, depending on who
-   sends and who receives the entity.
+   sends and who receives the entity.</p>
 
-14.1 Accept
+<h2 id="section-1">14.1 Accept</h2>
 
    The Accept request-header field can be used to specify certain media
    types which are acceptable for the response. Accept headers can be
@@ -45,15 +51,6 @@
       media type registry and the rare usage of any media type
       parameters in Accept. Future media types are discouraged from
       registering any parameter named "q".
-
-
-
-
-
-Fielding, et al.            Standards Track                   [Page 100]
-
-RFC 2616                        HTTP/1.1                       June 1999
-
 
    The example
 
@@ -103,14 +100,6 @@ RFC 2616                        HTTP/1.1                       June 1999
        text/html;level=1         = 1
        text/html                 = 0.7
        text/plain                = 0.3
-
-
-
-Fielding, et al.            Standards Track                   [Page 101]
-
-RFC 2616                        HTTP/1.1                       June 1999
-
-
        image/jpeg                = 0.5
        text/html;level=2         = 0.4
        text/html;level=3         = 0.7
@@ -120,7 +109,7 @@ RFC 2616                        HTTP/1.1                       June 1999
       a closed system which cannot interact with other rendering agents,
       this default set ought to be configurable by the user.
 
-14.2 Accept-Charset
+<h2 id="section-2">14.2 Accept-Charset</h2>
 
    The Accept-Charset request-header field can be used to indicate what
    character sets are acceptable for the response. This field allows
@@ -152,21 +141,13 @@ RFC 2616                        HTTP/1.1                       June 1999
    an error response with the 406 (not acceptable) status code, though
    the sending of an unacceptable response is also allowed.
 
-14.3 Accept-Encoding
+<h2 id="section-3">14.3 Accept-Encoding</h2>
 
    The Accept-Encoding request-header field is similar to Accept, but
    restricts the content-codings (section 3.5) that are acceptable in
    the response.
 
        Accept-Encoding  = "Accept-Encoding" ":"
-
-
-
-Fielding, et al.            Standards Track                   [Page 102]
-
-RFC 2616                        HTTP/1.1                       June 1999
-
-
                           1#( codings [ ";" "q" "=" qvalue ] )
        codings          = ( content-coding | "*" )
 
@@ -215,14 +196,6 @@ RFC 2616                        HTTP/1.1                       June 1999
       Note: If the request does not include an Accept-Encoding field,
       and if the "identity" content-coding is unavailable, then
       content-codings commonly understood by HTTP/1.0 clients (i.e.,
-
-
-
-Fielding, et al.            Standards Track                   [Page 103]
-
-RFC 2616                        HTTP/1.1                       June 1999
-
-
       "gzip" and "compress") are preferred; some older clients
       improperly display messages sent with other content-codings.  The
       server might also make this decision based on information about
@@ -232,7 +205,7 @@ RFC 2616                        HTTP/1.1                       June 1999
       associated with content-codings. This means that qvalues will not
       work and are not permitted with x-gzip or x-compress.
 
-14.4 Accept-Language
+<h2 id="section-4">14.4 Accept-Language</h2>
 
    The Accept-Language request-header field is similar to Accept, but
    restricts the set of natural languages that are preferred as a
@@ -270,15 +243,6 @@ RFC 2616                        HTTP/1.1                       June 1999
    range in the field matches the tag, the language quality factor
    assigned is 0. If no Accept-Language header is present in the
    request, the server
-
-
-
-
-Fielding, et al.            Standards Track                   [Page 104]
-
-RFC 2616                        HTTP/1.1                       June 1999
-
-
    SHOULD assume that all languages are equally acceptable. If an
    Accept-Language header is present, then all languages which are
    assigned a quality factor greater than 0 are acceptable.
@@ -303,7 +267,7 @@ RFC 2616                        HTTP/1.1                       June 1999
       user agent might suggest in such a case to add "en" to get the
       best matching behavior.
 
-14.5 Accept-Ranges
+<h2 id="section-5">14.5 Accept-Ranges</h2>
 
       The Accept-Ranges response-header field allows the server to
       indicate its acceptance of range requests for a resource:
@@ -326,16 +290,7 @@ RFC 2616                        HTTP/1.1                       June 1999
 
       to advise the client not to attempt a range request.
 
-
-
-
-
-Fielding, et al.            Standards Track                   [Page 105]
-
-RFC 2616                        HTTP/1.1                       June 1999
-
-
-14.6 Age
+<h2>14.6 Age</h2>
 
       The Age response-header field conveys the sender's estimate of the
       amount of time since the response (or its revalidation) was
@@ -357,7 +312,7 @@ RFC 2616                        HTTP/1.1                       June 1999
       own cache. Caches SHOULD use an arithmetic type of at least 31
       bits of range.
 
-14.7 Allow
+<h2>14.7 Allow</h2>
 
       The Allow entity-header field lists the set of methods supported
       by the resource identified by the Request-URI. The purpose of this
@@ -382,20 +337,11 @@ RFC 2616                        HTTP/1.1                       June 1999
       SHOULD include an Allow header in the response giving the actual
       supported methods.
 
-
-
-
-
-Fielding, et al.            Standards Track                   [Page 106]
-
-RFC 2616                        HTTP/1.1                       June 1999
-
-
       A proxy MUST NOT modify the Allow header field even if it does not
       understand all the methods specified, since the user agent might
       have other means of communicating with the origin server.
 
-14.8 Authorization
+<h2>14.8 Authorization</h2>
 
       A user agent that wishes to authenticate itself with a server--
       usually, but not necessarily, after receiving a 401 response--does
@@ -439,15 +385,7 @@ RFC 2616                        HTTP/1.1                       June 1999
       3. If the response includes the "public" cache-control directive,
          it MAY be returned in reply to any subsequent request.
 
-
-
-
-Fielding, et al.            Standards Track                   [Page 107]
-
-RFC 2616                        HTTP/1.1                       June 1999
-
-
-14.9 Cache-Control
+<h2>14.9 Cache-Control</h2>
 
    The Cache-Control general-header field is used to specify directives
    that MUST be obeyed by all caching mechanisms along the
@@ -497,12 +435,6 @@ RFC 2616                        HTTP/1.1                       June 1999
     cache-extension = token [ "=" ( token | quoted-string ) ]
 
 
-
-Fielding, et al.            Standards Track                   [Page 108]
-
-RFC 2616                        HTTP/1.1                       June 1999
-
-
    When a directive appears without any 1#field-name parameter, the
    directive applies to the entire request or response. When such a
    directive appears with a 1#field-name parameter, it applies only to
@@ -530,7 +462,7 @@ RFC 2616                        HTTP/1.1                       June 1999
 
       - Extensions to the caching system.
 
-14.9.1 What is Cacheable
+<h3>14.9.1 What is Cacheable</h3>
 
    By default, a response is cacheable if the requirements of the
    request method, request header fields, and the response status
@@ -549,16 +481,6 @@ RFC 2616                        HTTP/1.1                       June 1999
       Indicates that all or part of the response message is intended for
       a single user and MUST NOT be cached by a shared cache. This
       allows an origin server to state that the specified parts of the
-
-
-
-
-
-Fielding, et al.            Standards Track                   [Page 109]
-
-RFC 2616                        HTTP/1.1                       June 1999
-
-
       response are intended for only one user and are not a valid
       response for requests by other users. A private (non-shared) cache
       MAY cache the response.
@@ -586,7 +508,7 @@ RFC 2616                        HTTP/1.1                       June 1999
        Note: Most HTTP/1.0 caches will not recognize or obey this
        directive.
 
-14.9.2 What May be Stored by Caches
+<h3>14.9.2 What May be Stored by Caches</h3>
 
    no-store
       The purpose of the no-store directive is to prevent the
