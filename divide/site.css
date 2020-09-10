@@ -21,3 +21,12 @@ span.error {
     color: red;
 }
 
+/* chapter 18, author */
+div.card {
+    white-space: pre-line;
+    margin: 1em;
+}
+div.card > strong {
+    margin-left: -1em;
+}
+
