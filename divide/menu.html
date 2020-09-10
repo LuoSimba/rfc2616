@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<link href="site.css" rel="Stylesheet" type="text/css" />
+</head>
+
+
+<body>
+
+<table>
+    <tr>
+        <td>Network Working Group</td>
+        <td>R. Fielding</td>
+    </tr>
+    <tr>
+        <td>Request for Comments: 2616</td><td>UC Irvine</td>
+    </tr>
+    <tr>
+        <td>Obsoletes: 2068</td><td>J. Gettys</td>
+    </tr>
+    <tr>
+        <td>Category: Standards Track</td><td>Compaq/W3C</td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td><td>J. Mogul</td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td><td>Compaq</td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td><td>H. Frystyk</td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td><td>W3C/MIT</td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td><td>L. Masinter</td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td><td>Xerox</td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td><td>P. Leach</td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td><td>Microsoft</td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td><td>T. Berners-Lee</td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td><td>W3C/MIT</td>
+    </tr>
+</table>
+
+1999年6月
+<hr />
+
+
+<h1>Hypertext Transfer Protocol -- HTTP/1.1</h1>
+
+<h2>Status of this Memo</h2>
+
+This document specifies an Internet standards track protocol for the
+Internet community, and requests discussion and suggestions for
+improvements.  Please refer to the current edition of the "Internet
+Official Protocol Standards" (STD 1) for the standardization state
+and status of this protocol.  Distribution of this memo is unlimited.
+
+<h2>版权声明</h2>
+
+Copyright (C) The Internet Society (1999).  All Rights Reserved.<br />
+
+<h2>摘要</h2>
+
+   The Hypertext Transfer Protocol (HTTP) is an application-level<br />
+   protocol for distributed, collaborative, hypermedia information<br />
+   systems. It is a generic, stateless, protocol which can be used for<br />
+   many tasks beyond its use for hypertext, such as name servers and<br />
+   distributed object management systems, through extension of its<br />
+   request methods, error codes and headers [47]. A feature of HTTP is<br />
+   the typing and negotiation of data representation, allowing systems<br />
+   to be built independently of the data being transferred.<br />
+<br />
+   HTTP has been in use by the World-Wide Web global information<br />
+   initiative since 1990. This specification defines the protocol<br />
+   referred to as "HTTP/1.1", and is an update to RFC 2068 [33].<br />
+
+
+<h2>目录</h2>
+<br />
+<a href="1.txt">第一章   介绍</a><br />
+<a href="#">   1.1    Purpose</a><br />
+<a href="#">   1.2   Requirements</a><br />
+<a href="#">   1.3   Terminology</a><br />
+<a href="#">   1.4   Overall Operation</a><br />
+<br />
+
+<a href="2.txt">第二章   Notational Conventions and Generic Grammar</a><br />
+<a href="#">   2.1   Augmented BNF</a><br />
+<a href="#">   2.2   Basic Rules</a><br />
+<br />
+
+<a href="3.html">第三章   Protocol Parameters</a><br />
+<a href="#">   3.1   HTTP Version</a><br />
+<a href="#">   3.2   Uniform Resource Identifiers</a><br />
+<a href="#">   3.2.1    General Syntax</a><br />
+<a href="#">   3.2.2    http URL</a><br />
+<a href="#">   3.2.3    URI Comparison</a><br />
+<a href="#">   3.3   Date/Time Formats</a><br />
+<a href="#">   3.3.1    Full Date</a><br />
+<a href="#">   3.3.2    Delta Seconds</a><br />
+<a href="#">   3.4   Character Sets</a><br />
+<a href="#">   3.4.1    Missing Charset</a><br />
+<a href="#">   3.5   Content Codings</a><br />
+<a href="#">   3.6   Transfer Codings</a><br />
+<a href="#">   3.6.1    Chunked Transfer Coding</a><br />
+<a href="#">   3.7   Media Types</a><br />
+<a href="#">   3.7.1    Canonicalization and Text Defaults</a><br />
+<a href="#">   3.7.2    Multipart Types</a><br />
+<a href="#">   3.8   Product Tokens</a><br />
+<a href="#">   3.9   Quality Values</a><br />
+<a href="#">   3.10  Language Tags</a><br />
+<a href="#">   3.11  Entity Tags</a><br />
+<a href="#">   3.12  Range Units</a><br />
+<br />
+<a href="#">第四章   HTTP Message ..................................................31</a><br />
+<a href="#">   4.1   Message Types ...............................................31</a><br />
+<a href="#">   4.2   Message Headers .............................................31</a><br />
+<a href="#">   4.3   Message Body ................................................32</a><br />
+<a href="#">   4.4   Message Length ..............................................33</a><br />
+<a href="#">   4.5   General Header Fields .......................................34</a><br />
+<br />
+<a href="#">第五章   Request .......................................................35</a><br />
+<a href="#">   5.1   Request-Line ................................................35</a><br />
+<a href="#">   5.1.1    Method ...................................................36</a><br />
+<a href="#">   5.1.2    Request-URI ..............................................36</a><br />
+<a href="#">   5.2   The Resource Identified by a Request ........................38</a><br />
+<a href="#">   5.3   Request Header Fields .......................................38</a><br />
+<br />
+<a href="#">第六章   Response ......................................................39</a><br />
+<a href="#">   6.1   Status-Line .................................................39</a><br />
+<a href="#">   6.1.1    Status Code and Reason Phrase ............................39</a><br />
+<a href="#">   6.2   Response Header Fields ......................................41</a><br />
+<br />
+<a href="#">第七章   Entity ........................................................42</a><br />
+<a href="#">   7.1   Entity Header Fields ........................................42</a><br />
+<a href="#">   7.2   Entity Body .................................................43</a><br />
+<a href="#">   7.2.1    Type .....................................................43</a><br />
+<a href="#">   7.2.2    Entity Length ............................................43</a><br />
+<br />
+<a href="#">第八章   Connections ...................................................44</a><br />
+<a href="#">   8.1   Persistent Connections ......................................44</a><br />
+<a href="#">   8.1.1    Purpose ..................................................44</a><br />
+<a href="#">   8.1.2    Overall Operation ........................................45</a><br />
+<a href="#">   8.1.3    Proxy Servers ............................................46</a><br />
+<a href="#">   8.1.4    Practical Considerations .................................46</a><br />
+<a href="#">   8.2   Message Transmission Requirements ...........................47</a><br />
+<a href="#">   8.2.1    Persistent Connections and Flow Control ..................47</a><br />
+<a href="#">   8.2.2    Monitoring Connections for Error Status Messages .........48</a><br />
+<a href="#">   8.2.3    Use of the 100 (Continue) Status .........................48</a><br />
+<a href="#">   8.2.4    Client Behavior if Server Prematurely Closes Connection ..50</a><br />
+<br />
+<a href="#">第九章   Method Definitions ............................................51</a><br />
+<a href="#">   9.1   Safe and Idempotent Methods .................................51</a><br />
+<a href="#">   9.1.1    Safe Methods .............................................51</a><br />
+<a href="#">   9.1.2    Idempotent Methods .......................................51</a><br />
+<a href="#">   9.2   OPTIONS .....................................................52</a><br />
+<a href="#">   9.3   GET .........................................................53</a><br />
+<a href="#">   9.4   HEAD ........................................................54</a><br />
+<a href="#">   9.5   POST ........................................................54</a><br />
+<a href="#">   9.6   PUT .........................................................55</a><br />
+<a href="#">   9.7   DELETE ......................................................56</a><br />
+<a href="#">   9.8   TRACE .......................................................56</a><br />
+<a href="#">   9.9   CONNECT .....................................................57</a><br />
+<br />
+<a href="#">第十章   Status Code Definitions ......................................57</a><br />
+<a href="#">   10.1  Informational 1xx ...........................................57</a><br />
+<a href="#">   10.1.1   100 Continue .............................................58</a><br />
+<a href="#">   10.1.2   101 Switching Protocols ..................................58</a><br />
+<a href="#">   10.2  Successful 2xx ..............................................58</a><br />
+<a href="#">   10.2.1   200 OK ...................................................58</a><br />
+<a href="#">   10.2.2   201 Created ..............................................59</a><br />
+<a href="#">   10.2.3   202 Accepted .............................................59</a><br />
+<a href="#">   10.2.4   203 Non-Authoritative Information ........................59</a><br />
+<a href="#">   10.2.5   204 No Content ...........................................60</a><br />
+<a href="#">   10.2.6   205 Reset Content ........................................60</a><br />
+<a href="#">   10.2.7   206 Partial Content ......................................60</a><br />
+<a href="#">   10.3  Redirection 3xx .............................................61</a><br />
+<a href="#">   10.3.1   300 Multiple Choices .....................................61</a><br />
+<a href="#">   10.3.2   301 Moved Permanently ....................................62</a><br />
+<a href="#">   10.3.3   302 Found ................................................62</a><br />
+<a href="#">   10.3.4   303 See Other ............................................63</a><br />
+<a href="#">   10.3.5   304 Not Modified .........................................63</a><br />
+<a href="#">   10.3.6   305 Use Proxy ............................................64</a><br />
+<a href="#">   10.3.7   306 (Unused) .............................................64</a><br />
+<a href="#">   10.3.8   307 Temporary Redirect ...................................65</a><br />
+<a href="#">   10.4  Client Error 4xx ............................................65</a><br />
+<a href="#">   10.4.1    400 Bad Request .........................................65</a><br />
+<a href="#">   10.4.2    401 Unauthorized ........................................66</a><br />
+<a href="#">   10.4.3    402 Payment Required ....................................66</a><br />
+<a href="#">   10.4.4    403 Forbidden ...........................................66</a><br />
+<a href="#">   10.4.5    404 Not Found ...........................................66</a><br />
+<a href="#">   10.4.6    405 Method Not Allowed ..................................66</a><br />
+<a href="#">   10.4.7    406 Not Acceptable ......................................67</a><br />
+<a href="#">   10.4.8    407 Proxy Authentication Required .......................67</a><br />
+<a href="#">   10.4.9    408 Request Timeout .....................................67</a><br />
+<a href="#">   10.4.10   409 Conflict ............................................67</a><br />
+<a href="#">   10.4.11   410 Gone ................................................68</a><br />
+<a href="#">   10.4.12   411 Length Required .....................................68</a><br />
+<a href="#">   10.4.13   412 Precondition Failed .................................68</a><br />
+<a href="#">   10.4.14   413 Request Entity Too Large ............................69</a><br />
+<a href="#">   10.4.15   414 Request-URI Too Long ................................69</a><br />
+<a href="#">   10.4.16   415 Unsupported Media Type ..............................69</a><br />
+<a href="#">   10.4.17   416 Requested Range Not Satisfiable .....................69</a><br />
+<a href="#">   10.4.18   417 Expectation Failed ..................................70</a><br />
+<a href="#">   10.5  Server Error 5xx ............................................70</a><br />
+<a href="#">   10.5.1   500 Internal Server Error ................................70</a><br />
+<a href="#">   10.5.2   501 Not Implemented ......................................70</a><br />
+<a href="#">   10.5.3   502 Bad Gateway ..........................................70</a><br />
+<a href="#">   10.5.4   503 Service Unavailable ..................................70</a><br />
+<a href="#">   10.5.5   504 Gateway Timeout ......................................71</a><br />
+<a href="#">   10.5.6   505 HTTP Version Not Supported ...........................71</a><br />
+<br />
+<a href="#">第十一章   Access Authentication ........................................71</a><br />
+<br />
+<a href="#">第十二章   Content Negotiation ..........................................71</a><br />
+<a href="#">   12.1  Server-driven Negotiation ...................................72</a><br />
+<a href="#">   12.2  Agent-driven Negotiation ....................................73</a><br />
+<a href="#">   12.3  Transparent Negotiation .....................................74</a><br />
+<br />
+<a href="#">第十三章   Caching in HTTP ..............................................74</a><br />
+<a href="#">   13.1.1   Cache Correctness ........................................75</a><br />
+<a href="#">   13.1.2   Warnings .................................................76</a><br />
+<a href="#">   13.1.3   Cache-control Mechanisms .................................77</a><br />
+<a href="#">   13.1.4   Explicit User Agent Warnings .............................78</a><br />
+<a href="#">   13.1.5   Exceptions to the Rules and Warnings .....................78</a><br />
+<a href="#">   13.1.6   Client-controlled Behavior ...............................79</a><br />
+<a href="#">   13.2  Expiration Model ............................................79</a><br />
+<a href="#">   13.2.1   Server-Specified Expiration ..............................79</a><br />
+<a href="#">   13.2.2   Heuristic Expiration .....................................80</a><br />
+<a href="#">   13.2.3   Age Calculations .........................................80</a><br />
+<a href="#">   13.2.4   Expiration Calculations ..................................83</a><br />
+<a href="#">   13.2.5   Disambiguating Expiration Values .........................84</a><br />
+<a href="#">   13.2.6   Disambiguating Multiple Responses ........................84</a><br />
+<a href="#">   13.3  Validation Model ............................................85</a><br />
+<a href="#">   13.3.1   Last-Modified Dates ......................................86</a><br />
+<a href="#">   13.3.2   Entity Tag Cache Validators ..............................86</a><br />
+<a href="#">   13.3.3   Weak and Strong Validators ...............................86</a><br />
+<a href="#">   13.3.4   Rules for When to Use Entity Tags and Last-Modified Dates.89</a><br />
+<a href="#">   13.3.5   Non-validating Conditionals ..............................90</a><br />
+<a href="#">   13.4  Response Cacheability .......................................91</a><br />
+<a href="#">   13.5  Constructing Responses From Caches ..........................92</a><br />
+<a href="#">   13.5.1   End-to-end and Hop-by-hop Headers ........................92</a><br />
+<a href="#">   13.5.2   Non-modifiable Headers ...................................92</a><br />
+<a href="#">   13.5.3   Combining Headers ........................................94</a><br />
+<a href="#">   13.5.4   Combining Byte Ranges ....................................95</a><br />
+<a href="#">   13.6  Caching Negotiated Responses ................................95</a><br />
+<a href="#">   13.7  Shared and Non-Shared Caches ................................96</a><br />
+<a href="#">   13.8  Errors or Incomplete Response Cache Behavior ................97</a><br />
+<a href="#">   13.9  Side Effects of GET and HEAD ................................97</a><br />
+<a href="#">   13.10   Invalidation After Updates or Deletions ...................97</a><br />
+<a href="#">   13.11   Write-Through Mandatory ...................................98</a><br />
+<a href="#">   13.12   Cache Replacement .........................................99</a><br />
+<a href="#">   13.13   History Lists .............................................99</a><br />
+<br />
+<a href="#">第十四章   Header Field Definitions ....................................100</a><br />
+<a href="#">   14.1  Accept .....................................................100</a><br />
+<a href="#">   14.2  Accept-Charset .............................................102</a><br />
+<a href="#">   14.3  Accept-Encoding ............................................102</a><br />
+<a href="#">   14.4  Accept-Language ............................................104</a><br />
+<a href="#">   14.5  Accept-Ranges ..............................................105</a><br />
+<a href="#">   14.6  Age ........................................................106</a><br />
+<a href="#">   14.7  Allow ......................................................106</a><br />
+<a href="#">   14.8  Authorization ..............................................107</a><br />
+<a href="#">   14.9  Cache-Control ..............................................108</a><br />
+<a href="#">   14.9.1   What is Cacheable .......................................109</a><br />
+<a href="#">   14.9.2   What May be Stored by Caches ............................110</a><br />
+<a href="#">   14.9.3   Modifications of the Basic Expiration Mechanism .........111</a><br />
+<a href="#">   14.9.4   Cache Revalidation and Reload Controls ..................113</a><br />
+<a href="#">   14.9.5   No-Transform Directive ..................................115</a><br />
+<a href="#">   14.9.6   Cache Control Extensions ................................116</a><br />
+<a href="#">   14.10   Connection ...............................................117</a><br />
+<a href="#">   14.11   Content-Encoding .........................................118</a><br />
+<a href="#">   14.12   Content-Language .........................................118</a><br />
+<a href="#">   14.13   Content-Length ...........................................119</a><br />
+<a href="#">   14.14   Content-Location .........................................120</a><br />
+<a href="#">   14.15   Content-MD5 ..............................................121</a><br />
+<a href="#">   14.16   Content-Range ............................................122</a><br />
+<a href="#">   14.17   Content-Type .............................................124</a><br />
+<a href="#">   14.18   Date .....................................................124</a><br />
+<a href="#">   14.18.1   Clockless Origin Server Operation ......................125</a><br />
+<a href="#">   14.19   ETag .....................................................126</a><br />
+<a href="#">   14.20   Expect ...................................................126</a><br />
+<a href="#">   14.21   Expires ..................................................127</a><br />
+<a href="#">   14.22   From .....................................................128</a><br />
+<a href="#">   14.23   Host .....................................................128</a><br />
+<a href="#">   14.24   If-Match .................................................129</a><br />
+<a href="#">   14.25   If-Modified-Since ........................................130</a><br />
+<a href="#">   14.26   If-None-Match ............................................132</a><br />
+<a href="#">   14.27   If-Range .................................................133</a><br />
+<a href="#">   14.28   If-Unmodified-Since ......................................134</a><br />
+<a href="#">   14.29   Last-Modified ............................................134</a><br />
+<a href="#">   14.30   Location .................................................135</a><br />
+<a href="#">   14.31   Max-Forwards .............................................136</a><br />
+<a href="#">   14.32   Pragma ...................................................136</a><br />
+<a href="#">   14.33   Proxy-Authenticate .......................................137</a><br />
+<a href="#">   14.34   Proxy-Authorization ......................................137</a><br />
+<a href="#">   14.35   Range ....................................................138</a><br />
+<a href="#">   14.35.1    Byte Ranges ...........................................138</a><br />
+<a href="#">   14.35.2    Range Retrieval Requests ..............................139</a><br />
+<a href="#">   14.36   Referer ..................................................140</a><br />
+<a href="#">   14.37   Retry-After ..............................................141</a><br />
+<a href="#">   14.38   Server ...................................................141</a><br />
+<a href="#">   14.39   TE .......................................................142</a><br />
+<a href="#">   14.40   Trailer ..................................................143</a><br />
+<a href="#">   14.41  Transfer-Encoding..........................................143</a><br />
+<a href="#">   14.42   Upgrade ..................................................144</a><br />
+<a href="#">   14.43   User-Agent ...............................................145</a><br />
+<a href="#">   14.44   Vary .....................................................145</a><br />
+<a href="#">   14.45   Via ......................................................146</a><br />
+<a href="#">   14.46   Warning ..................................................148</a><br />
+<a href="#">   14.47   WWW-Authenticate .........................................150</a><br />
+<br />
+<a href="#">第十五章 Security Considerations .......................................150</a><br />
+<a href="#">   15.1      Personal Information....................................151</a><br />
+<a href="#">   15.1.1   Abuse of Server Log Information .........................151</a><br />
+<a href="#">   15.1.2   Transfer of Sensitive Information .......................151</a><br />
+<a href="#">   15.1.3   Encoding Sensitive Information in URI's .................152</a><br />
+<a href="#">   15.1.4   Privacy Issues Connected to Accept Headers ..............152</a><br />
+<a href="#">   15.2  Attacks Based On File and Path Names .......................153</a><br />
+<a href="#">   15.3  DNS Spoofing ...............................................154</a><br />
+<a href="#">   15.4  Location Headers and Spoofing ..............................154</a><br />
+<a href="#">   15.5  Content-Disposition Issues .................................154</a><br />
+<a href="#">   15.6  Authentication Credentials and Idle Clients ................155</a><br />
+<a href="#">   15.7  Proxies and Caching ........................................155</a><br />
+<a href="#">   15.7.1    Denial of Service Attacks on Proxies....................156</a><br />
+<br />
+<a href="#">第十六章   Acknowledgments .............................................156</a><br />
+<br />
+<a href="#">第十七章   References ..................................................158</a><br />
+<br />
+<a href="#">第十八章   Authors' Addresses ..........................................162</a><br />
+<br />
+<a href="#">第十九章   Appendices ..................................................164</a><br />
+<a href="#">   19.1  Internet Media Type message/http and application/http ......164</a><br />
+<a href="#">   19.2  Internet Media Type multipart/byteranges ...................165</a><br />
+<a href="#">   19.3  Tolerant Applications ......................................166</a><br />
+<a href="#">   19.4  Differences Between HTTP Entities and RFC 2045 Entities ....167</a><br />
+<a href="#">   19.4.1   MIME-Version ............................................167</a><br />
+<a href="#">   19.4.2   Conversion to Canonical Form ............................167</a><br />
+<a href="#">   19.4.3   Conversion of Date Formats ..............................168</a><br />
+<a href="#">   19.4.4   Introduction of Content-Encoding ........................168</a><br />
+<a href="#">   19.4.5   No Content-Transfer-Encoding ............................168</a><br />
+<a href="#">   19.4.6   Introduction of Transfer-Encoding .......................169</a><br />
+<a href="#">   19.4.7   MHTML and Line Length Limitations .......................169</a><br />
+<a href="#">   19.5  Additional Features ........................................169</a><br />
+<a href="#">   19.5.1   Content-Disposition .....................................170</a><br />
+<a href="#">   19.6  Compatibility with Previous Versions .......................170</a><br />
+<a href="#">   19.6.1   Changes from HTTP/1.0 ...................................171</a><br />
+<a href="#">   19.6.2   Compatibility with HTTP/1.0 Persistent Connections ......172</a><br />
+<a href="#">   19.6.3   Changes from RFC 2068 ...................................172</a><br />
+<br />
+<a href="#">第二十章   Index .......................................................175</a><br />
+<br />
+<a href="#">第二十一章   Full Copyright Statement ....................................176</a><br />
+
+</body>
+</html>
