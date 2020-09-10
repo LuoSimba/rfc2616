@@ -41,15 +41,6 @@
    [12] Horton, M. and R. Adams, "Standard for Interchange of USENET
         Messages", RFC 1036, December 1987.
 
-
-
-
-
-Fielding, et al.            Standards Track                   [Page 158]
-
-RFC 2616                        HTTP/1.1                       June 1999
-
-
    [13] Kantor, B. and P. Lapsley, "Network News Transfer Protocol", RFC
         977, February 1986.
 

@@ -1,21 +1,31 @@
+<meta charset="utf-8">
+<link href="site.css" rel="Stylesheet" type="text/css" />
 
-7 Entity
 
-   Request and Response messages MAY transfer an entity if not otherwise
+<h1>第七章 Entity</h1>
+
+<p class="cn"><strong>实体</strong></p>
+
+<p>Request and Response messages MAY transfer an entity if not otherwise
    restricted by the request method or response status code. An entity
    consists of entity-header fields and an entity-body, although some
-   responses will only include the entity-headers.
+   responses will only include the entity-headers.</p>
 
-   In this section, both sender and recipient refer to either the client
-   or the server, depending on who sends and who receives the entity.
+   <p>In this section, both sender and recipient refer to either the client
+   or the server, depending on who sends and who receives the entity.</p>
 
-7.1 Entity Header Fields
+<h2 id="section-2">7.1 Entity Header Fields</h2>
 
-   Entity-header fields define metainformation about the entity-body or,
+<p class="cn"><strong>实体首部字段</strong></p>
+
+   <p>Entity-header fields define metainformation about the entity-body or,
    if no body is present, about the resource identified by the request.
    Some of this metainformation is OPTIONAL; some might be REQUIRED by
-   portions of this specification.
+   portions of this specification.</p>
 
+   <p class="cn">present: 这里作形容词, 表示出现, 存在。</p>
+
+   <pre>
        entity-header  = Allow                    ; Section 14.7
                       | Content-Encoding         ; Section 14.11
                       | Content-Language         ; Section 14.12
@@ -29,73 +39,56 @@
                       | extension-header
 
        extension-header = message-header
+    </pre>
 
-   The extension-header mechanism allows additional entity-header fields
+  <p>The extension-header mechanism allows additional entity-header fields
    to be defined without changing the protocol, but these fields cannot
    be assumed to be recognizable by the recipient. Unrecognized header
    fields SHOULD be ignored by the recipient and MUST be forwarded by
-   transparent proxies.
+   transparent proxies.</p>
 
 
+<h2 id="section-2">7.2 Entity Body</h2>
 
-Fielding, et al.            Standards Track                    [Page 42]
-
-RFC 2616                        HTTP/1.1                       June 1999
+<p>The entity-body (if any) sent with an HTTP request or response is in
+   a format and encoding defined by the entity-header fields.</p>
 
-
-7.2 Entity Body
-
-   The entity-body (if any) sent with an HTTP request or response is in
-   a format and encoding defined by the entity-header fields.
-
+    <pre>
        entity-body    = *OCTET
+    </pre>
 
-   An entity-body is only present in a message when a message-body is
+   <p>An entity-body is only present in a message when a message-body is
    present, as described in section 4.3. The entity-body is obtained
    from the message-body by decoding any Transfer-Encoding that might
-   have been applied to ensure safe and proper transfer of the message.
+   have been applied to ensure safe and proper transfer of the message.</p>
 
-7.2.1 Type
+<h3>7.2.1 Type</h3>
 
-   When an entity-body is included with a message, the data type of that
+<p>When an entity-body is included with a message, the data type of that
    body is determined via the header fields Content-Type and Content-
-   Encoding. These define a two-layer, ordered encoding model:
+   Encoding. These define a two-layer, ordered encoding model:</p>
 
+   <pre>
        entity-body := Content-Encoding( Content-Type( data ) )
+    </pre>
 
-   Content-Type specifies the media type of the underlying data.
+   <p>Content-Type specifies the media type of the underlying data.
    Content-Encoding may be used to indicate any additional content
    codings applied to the data, usually for the purpose of data
    compression, that are a property of the requested resource. There is
-   no default encoding.
+   no default encoding.</p>
 
-   Any HTTP/1.1 message containing an entity-body SHOULD include a
+   <p>Any HTTP/1.1 message containing an entity-body SHOULD include a
    Content-Type header field defining the media type of that body. If
    and only if the media type is not given by a Content-Type field, the
    recipient MAY attempt to guess the media type via inspection of its
    content and/or the name extension(s) of the URI used to identify the
    resource. If the media type remains unknown, the recipient SHOULD
-   treat it as type "application/octet-stream".
+   treat it as type "application/octet-stream".</p>
 
-7.2.2 Entity Length
+<h3>7.2.2 Entity Length</h3>
 
    The entity-length of a message is the length of the message-body
    before any transfer-codings have been applied. Section 4.4 defines
    how the transfer-length of a message-body is determined.
-
-
-
-
-
-
-
-
-
-
-
-
-Fielding, et al.            Standards Track                    [Page 43]
-
-RFC 2616                        HTTP/1.1                       June 1999
-
 
