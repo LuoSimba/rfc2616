@@ -1,16 +1,18 @@
+<meta charset="utf-8">
+<link href="site.css" rel="Stylesheet" type="text/css" />
 
-19 Appendices
+<h1>第十九章 Appendices</h1>
 
-19.1 Internet Media Type message/http and application/http
+<h2>19.1 Internet Media Type message/http and application/http</h2>
 
-   In addition to defining the HTTP/1.1 protocol, this document serves
+<p>In addition to defining the HTTP/1.1 protocol, this document serves
    as the specification for the Internet media type "message/http" and
    "application/http". The message/http type can be used to enclose a
    single HTTP request or response message, provided that it obeys the
    MIME restrictions for all "message" types regarding line length and
    encodings. The application/http type can be used to enclose a
    pipeline of one or more HTTP request or response messages (not
-   intermixed). The following is to be registered with IANA [17].
+   intermixed). The following is to be registered with IANA [17].</p>
 
        Media Type name:         message
        Media subtype name:      http
@@ -44,18 +46,7 @@
 
 
 
-
-
-
-
-
-
-Fielding, et al.            Standards Track                   [Page 164]
-
-RFC 2616                        HTTP/1.1                       June 1999
-
-
-19.2 Internet Media Type multipart/byteranges
+<h2>19.2 Internet Media Type multipart/byteranges</h2>
 
    When an HTTP 206 (Partial Content) response message includes the
    content of multiple ranges (a response to a request for multiple
@@ -101,16 +92,6 @@ RFC 2616                        HTTP/1.1                       June 1999
       1) Additional CRLFs may precede the first boundary string in the
          entity.
 
-
-
-
-
-
-Fielding, et al.            Standards Track                   [Page 165]
-
-RFC 2616                        HTTP/1.1                       June 1999
-
-
       2) Although RFC 2046 [40] permits the boundary string to be
          quoted, some existing implementations handle a quoted boundary
          string incorrectly.
@@ -120,7 +101,7 @@ RFC 2616                        HTTP/1.1                       June 1999
          multipart/x-byteranges, which is almost, but not quite
          compatible with the version documented in HTTP/1.1.
 
-19.3 Tolerant Applications
+<h2>19.3 Tolerant Applications</h2>
 
    Although this document specifies the requirements for the generation
    of HTTP/1.1 messages, not all applications will be correct in their
@@ -159,19 +140,11 @@ RFC 2616                        HTTP/1.1                       June 1999
         local time zone MUST NOT influence the calculation or comparison
         of an age or expiration time.
 
-
-
-
-Fielding, et al.            Standards Track                   [Page 166]
-
-RFC 2616                        HTTP/1.1                       June 1999
-
-
       - If an HTTP header incorrectly carries a date value with a time
         zone other than GMT, it MUST be converted into GMT using the
         most conservative possible conversion.
 
-19.4 Differences Between HTTP Entities and RFC 2045 Entities
+<h2>19.4 Differences Between HTTP Entities and RFC 2045 Entities</h2>
 
    HTTP/1.1 uses many of the constructs defined for Internet Mail (RFC
    822 [9]) and the Multipurpose Internet Mail Extensions (MIME [7]) to
@@ -191,7 +164,7 @@ RFC 2616                        HTTP/1.1                       June 1999
    also need to be aware of the differences because some conversions
    might be required.
 
-19.4.1 MIME-Version
+<h3>19.4.1 MIME-Version</h3>
 
    HTTP is not a MIME-compliant protocol. However, HTTP/1.1 messages MAY
    include a single MIME-Version general-header field to indicate what
@@ -207,7 +180,7 @@ RFC 2616                        HTTP/1.1                       June 1999
    HTTP/1.1 message parsing and semantics are defined by this document
    and not the MIME specification.
 
-19.4.2 Conversion to Canonical Form
+<h3>19.4.2 Conversion to Canonical Form</h3>
 
    RFC 2045 [7] requires that an Internet mail entity be converted to
    canonical form prior to being transferred, as described in section 4
@@ -215,14 +188,6 @@ RFC 2616                        HTTP/1.1                       June 1999
    allowed for subtypes of the "text" media type when transmitted over
    HTTP. RFC 2046 requires that content with a type of "text" represent
    line breaks as CRLF and forbids the use of CR or LF outside of line
-
-
-
-Fielding, et al.            Standards Track                   [Page 167]
-
-RFC 2616                        HTTP/1.1                       June 1999
-
-
    break sequences. HTTP allows CRLF, bare CR, and bare LF to indicate a
    line break within text content when a message is transmitted over
    HTTP.
@@ -241,7 +206,7 @@ RFC 2616                        HTTP/1.1                       June 1999
    is already in canonical form. Therefore, the canonical form is
    recommended for any content that uses such checksums in HTTP.
 
-19.4.3 Conversion of Date Formats
+<h3>19.4.3 Conversion of Date Formats</h3>
 
    HTTP/1.1 uses a restricted set of date formats (section 3.3.1) to
    simplify the process of date comparison. Proxies and gateways from
@@ -249,7 +214,7 @@ RFC 2616                        HTTP/1.1                       June 1999
    message conforms to one of the HTTP/1.1 formats and rewrite the date
    if necessary.
 
-19.4.4 Introduction of Content-Encoding
+<h3>19.4.4 Introduction of Content-Encoding</h3>
 
    RFC 2045 does not include any concept equivalent to HTTP/1.1's
    Content-Encoding header field. Since this acts as a modifier on the
@@ -261,7 +226,7 @@ RFC 2616                        HTTP/1.1                       June 1999
    a function equivalent to Content-Encoding. However, this parameter is
    not part of RFC 2045.)
 
-19.4.5 No Content-Transfer-Encoding
+<h3>19.4.5 No Content-Transfer-Encoding</h3>
 
    HTTP does not use the Content-Transfer-Encoding (CTE) field of RFC
    2045. Proxies and gateways from MIME-compliant protocols to HTTP MUST
@@ -271,20 +236,12 @@ RFC 2616                        HTTP/1.1                       June 1999
    Proxies and gateways from HTTP to MIME-compliant protocols are
    responsible for ensuring that the message is in the correct format
    and encoding for safe transport on that protocol, where "safe
-
-
-
-Fielding, et al.            Standards Track                   [Page 168]
-
-RFC 2616                        HTTP/1.1                       June 1999
-
-
    transport" is defined by the limitations of the protocol being used.
    Such a proxy or gateway SHOULD label the data with an appropriate
    Content-Transfer-Encoding if doing so will improve the likelihood of
    safe transport over the destination protocol.
 
-19.4.6 Introduction of Transfer-Encoding
+<h3>19.4.6 Introduction of Transfer-Encoding</h3>
 
    HTTP/1.1 introduces the Transfer-Encoding header field (section
    14.41). Proxies/gateways MUST remove any transfer-coding prior to
@@ -309,7 +266,7 @@ RFC 2616                        HTTP/1.1                       June 1999
        Content-Length := length
        Remove "chunked" from Transfer-Encoding
 
-19.4.7 MHTML and Line Length Limitations
+<h3>19.4.7 MHTML and Line Length Limitations</h3>
 
    HTTP implementations which share code with MHTML [45] implementations
    need to be aware of MIME line length limitations. Since HTTP does not
@@ -320,21 +277,13 @@ RFC 2616                        HTTP/1.1                       June 1999
    does not interpret the content or any MIME header lines that might be
    contained therein.
 
-19.5 Additional Features
+<h2>19.5 Additional Features</h2>
 
    RFC 1945 and RFC 2068 document protocol elements used by some
    existing HTTP implementations, but not consistently and correctly
    across most HTTP/1.1 applications. Implementors are advised to be
    aware of these features, but cannot rely upon their presence in, or
    interoperability with, other HTTP/1.1 applications. Some of these
-
-
-
-Fielding, et al.            Standards Track                   [Page 169]
-
-RFC 2616                        HTTP/1.1                       June 1999
-
-
    describe proposed experimental features, and some describe features
    that experimental deployment found lacking that are now addressed in
    the base HTTP/1.1 specification.
@@ -384,13 +333,6 @@ RFC 2616                        HTTP/1.1                       June 1999
       - recognize the format of the Request-Line for HTTP/0.9, 1.0, and
         1.1 requests;
 
-
-
-Fielding, et al.            Standards Track                   [Page 170]
-
-RFC 2616                        HTTP/1.1                       June 1999
-
-
       - understand any valid request in the format of HTTP/0.9, 1.0, or
         1.1;
 
@@ -411,7 +353,7 @@ RFC 2616                        HTTP/1.1                       June 1999
    version of persistent connections described in section 19.7.1 of RFC
    2068 [33].
 
-19.6.1 Changes from HTTP/1.0
+<h3>19.6.1 Changes from HTTP/1.0</h3>
 
    This section summarizes major differences between versions HTTP/1.0
    and HTTP/1.1.
@@ -460,12 +402,21 @@ RFC 2616                        HTTP/1.1                       June 1999
 
       - Servers MUST accept absolute URIs.
 
-19.6.2 Compatibility with HTTP/1.0 Persistent Connections
+<h3>19.6.2 Compatibility with HTTP/1.0 Persistent Connections</h3>
 
-   Some clients and servers might wish to be compatible with some
+  <p>Some clients and servers might wish to be compatible with some
    previous implementations of persistent connections in HTTP/1.0
-   clients and servers. Persistent connections in HTTP/1.0 are
-   explicitly negotiated as they are not the default behavior. HTTP/1.0
+   clients and servers.</p>
+   
+   <p>Persistent connections in HTTP/1.0 are explicitly
+   negotiated as they are not the default behavior.</p>
+
+   <p class="cn">从这句话可以看出, HTTP/1.0 不是没有长连接。</p>
+
+   <p class="cn">只是 HTTP/1.0 默认使用短连接。如果要使用长连接,
+    则必须明确地指定。</p>
+   
+   <p>HTTP/1.0
    experimental implementations of persistent connections are faulty,
    and the new facilities in HTTP/1.1 are designed to rectify these
    problems. The problem was that some existing 1.0 clients may be
@@ -474,62 +425,57 @@ RFC 2616                        HTTP/1.1                       June 1999
    inbound server, which would establish the Keep-Alive connection and
    result in a hung HTTP/1.0 proxy waiting for the close on the
    response. The result is that HTTP/1.0 clients must be prevented from
-   using Keep-Alive when talking to proxies.
+   using Keep-Alive when talking to proxies.</p>
 
-   However, talking to proxies is the most important use of persistent
+   <p>However, talking to proxies is the most important use of persistent
    connections, so that prohibition is clearly unacceptable. Therefore,
    we need some other mechanism for indicating a persistent connection
    is desired, which is safe to use even when talking to an old proxy
-   that ignores Connection. Persistent connections are the default for
+   that ignores Connection.</p>
+   
+   <p>Persistent connections are the default for
    HTTP/1.1 messages; we introduce a new keyword (Connection: close) for
-   declaring non-persistence. See section 14.10.
+   declaring non-persistence. See section 14.10.</p>
 
-   The original HTTP/1.0 form of persistent connections (the Connection:
-   Keep-Alive and Keep-Alive header) is documented in RFC 2068. [33]
+   <p>The original HTTP/1.0 form of persistent connections (the Connection:
+   Keep-Alive and Keep-Alive header) is documented in RFC 2068. [33]</p>
 
-19.6.3 Changes from RFC 2068
+<h3>19.6.3 Changes from RFC 2068</h3>
 
-   This specification has been carefully audited to correct and
+   <p>This specification has been carefully audited to correct and
    disambiguate key word usage; RFC 2068 had many problems in respect to
-   the conventions laid out in RFC 2119 [34].
+   the conventions laid out in RFC 2119 [34].</p>
 
-   Clarified which error code should be used for inbound server failures
-   (e.g. DNS failures). (Section 10.5.5).
+   <p>Clarified which error code should be used for inbound server failures
+   (e.g. DNS failures). (Section 10.5.5).</p>
 
+   <p>CREATE had a race that required an Etag be sent when a resource is
+   first created. (Section 10.2.2).</p>
 
-
-Fielding, et al.            Standards Track                   [Page 172]
-
-RFC 2616                        HTTP/1.1                       June 1999
-
-
-   CREATE had a race that required an Etag be sent when a resource is
-   first created. (Section 10.2.2).
-
-   Content-Base was deleted from the specification: it was not
+   <p>Content-Base was deleted from the specification: it was not
    implemented widely, and there is no simple, safe way to introduce it
    without a robust extension mechanism. In addition, it is used in a
-   similar, but not identical fashion in MHTML [45].
+   similar, but not identical fashion in MHTML [45].</p>
 
-   Transfer-coding and message lengths all interact in ways that
+   <p>Transfer-coding and message lengths all interact in ways that
    required fixing exactly when chunked encoding is used (to allow for
    transfer encoding that may not be self delimiting); it was important
    to straighten out exactly how message lengths are computed. (Sections
-   3.6, 4.4, 7.2.2, 13.5.2, 14.13, 14.16)
+   3.6, 4.4, 7.2.2, 13.5.2, 14.13, 14.16)</p>
 
-   A content-coding of "identity" was introduced, to solve problems
-   discovered in caching. (section 3.5)
+   <p>A content-coding of "identity" was introduced, to solve problems
+   discovered in caching. (section 3.5)</p>
 
-   Quality Values of zero should indicate that "I don't want something"
-   to allow clients to refuse a representation. (Section 3.9)
+   <p>Quality Values of zero should indicate that "I don't want something"
+   to allow clients to refuse a representation. (Section 3.9)</p>
 
-   The use and interpretation of HTTP version numbers has been clarified
+   <p>The use and interpretation of HTTP version numbers has been clarified
    by RFC 2145. Require proxies to upgrade requests to highest protocol
    version they support to deal with problems discovered in HTTP/1.0
-   implementations (Section 3.1)
+   implementations (Section 3.1)</p>
 
-   Charset wildcarding is introduced to avoid explosion of character set
-   names in accept headers. (Section 14.2)
+   <p>Charset wildcarding is introduced to avoid explosion of character set
+   names in accept headers. (Section 14.2)</p>
 
    A case was missed in the Cache-Control model of HTTP/1.1; s-maxage
    was introduced to add this missing case. (Sections 13.4, 14.8, 14.9,

@@ -1,11 +1,15 @@
+<meta charset="utf-8">
+<link href="site.css" rel="Stylesheet" type="text/css" />
 
-8 Connections
+<h1>第八章 Connections</h1>
 
-8.1 Persistent Connections
+<h2>8.1 Persistent Connections</h2>
 
-8.1.1 Purpose
+<p class="cn">persistent: 持续的。<strong>persistent connections</strong> 即长连接。</p>
 
-   Prior to persistent connections, a separate TCP connection was
+<h3>8.1.1 Purpose</h3>
+
+<p>Prior to persistent connections, a separate TCP connection was
    established to fetch each URL, increasing the load on HTTP servers
    and causing congestion on the Internet. The use of inline images and
    other associated data often require a client to make multiple
@@ -14,174 +18,179 @@
    implementation are available [26] [30]. Implementation experience and
    measurements of actual HTTP/1.1 (RFC 2068) implementations show good
    results [39]. Alternatives have also been explored, for example,
-   T/TCP [27].
+   <span class="error">T/TCP</span> [27].</p>
 
-   Persistent HTTP connections have a number of advantages:
+   <p class="cn">
+   prior to: 在...之前<br />
+   congestion: （交通）拥塞<br />
+   </p>
 
+   <p>Persistent HTTP connections have a number of advantages:</p>
+
+   <p>
       - By opening and closing fewer TCP connections, CPU time is saved
         in routers and hosts (clients, servers, proxies, gateways,
         tunnels, or caches), and memory used for TCP protocol control
-        blocks can be saved in hosts.
+        blocks can be saved in hosts.</p>
 
+        <p>
       - HTTP requests and responses can be pipelined on a connection.
         Pipelining allows a client to make multiple requests without
         waiting for each response, allowing a single TCP connection to
         be used much more efficiently, with much lower elapsed time.
+        </p>
 
+        <p>
       - Network congestion is reduced by reducing the number of packets
         caused by TCP opens, and by allowing TCP sufficient time to
         determine the congestion state of the network.
+        </p>
 
+        <p>
       - Latency on subsequent requests is reduced since there is no time
         spent in TCP's connection opening handshake.
+        </p>
 
+        <p>
       - HTTP can evolve more gracefully, since errors can be reported
         without the penalty of closing the TCP connection. Clients using
         future versions of HTTP might optimistically try a new feature,
         but if communicating with an older server, retry with old
         semantics after an error is reported.
+        </p>
 
-   HTTP implementations SHOULD implement persistent connections.
-
-
-
+   <p>HTTP implementations SHOULD implement persistent connections. </p>
 
 
+<h3>8.1.2 Overall Operation</h3>
 
-
-
-Fielding, et al.            Standards Track                    [Page 44]
-
-RFC 2616                        HTTP/1.1                       June 1999
-
-
-8.1.2 Overall Operation
-
-   A significant difference between HTTP/1.1 and earlier versions of
+<p>A significant difference between HTTP/1.1 and earlier versions of
    HTTP is that persistent connections are the default behavior of any
    HTTP connection. That is, unless otherwise indicated, the client
    SHOULD assume that the server will maintain a persistent connection,
-   even after error responses from the server.
+   even after error responses from the server.</p>
 
-   Persistent connections provide a mechanism by which a client and a
+   <p class="cn">HTTP/1.1 与较早版本的明显区别, 就是默认启用长连接。</p>
+
+   <p>Persistent connections provide a mechanism by which a client and a
    server can signal the close of a TCP connection. This signaling takes
    place using the Connection header field (section 14.10). Once a close
    has been signaled, the client MUST NOT send any more requests on that
-   connection.
+   connection.</p>
 
-8.1.2.1 Negotiation
+   <p class="cn">mechanism: 机制</p>
 
-   An HTTP/1.1 server MAY assume that a HTTP/1.1 client intends to
+<h4>8.1.2.1 Negotiation</h4>
+
+<p class="cn">negotiation: 谈判, 协商</p>
+
+<p>An HTTP/1.1 server MAY assume that a HTTP/1.1 client intends to
    maintain a persistent connection unless a Connection header including
    the connection-token "close" was sent in the request. If the server
    chooses to close the connection immediately after sending the
    response, it SHOULD send a Connection header including the
-   connection-token close.
+   connection-token close.</p>
 
-   An HTTP/1.1 client MAY expect a connection to remain open, but would
+   <p class="cn">这段讲服务端应该怎么做。</p>
+
+   <p>An HTTP/1.1 client MAY expect a connection to remain open, but would
    decide to keep it open based on whether the response from a server
    contains a Connection header with the connection-token close. In case
    the client does not want to maintain a connection for more than that
    request, it SHOULD send a Connection header including the
-   connection-token close.
+   connection-token close.</p>
 
-   If either the client or the server sends the close token in the
+   <p class="cn">这段讲客户端应该怎么做。</p>
+
+   <p>If <strong>either</strong> the client or the server sends the close token in the
    Connection header, that request becomes the last one for the
-   connection.
+   connection.</p>
 
-   Clients and servers SHOULD NOT assume that a persistent connection is
+   <p class="cn">只要任何一方要求断开连接, 那么连接就会被断开。</p>
+
+   <p>Clients and servers SHOULD NOT assume that a persistent connection is
    maintained for HTTP versions less than 1.1 unless it is explicitly
    signaled. See section 19.6.2 for more information on backward
-   compatibility with HTTP/1.0 clients.
+   compatibility with HTTP/1.0 clients.</p>
 
-   In order to remain persistent, all messages on the connection MUST
+   <p class="cn">在使用低版本协议时, 任何一方都不应该假设存在持久连接。</p>
+
+   <p>In order to remain persistent, all messages on the connection MUST
    have a self-defined message length (i.e., one not defined by closure
-   of the connection), as described in section 4.4.
+   of the connection), as described in section 4.4.</p>
 
+   <p class="cn">in order to: 为了...</p>
 
+   <p class="cn">为了保持持久连接, 任何的报文都必须可以明确知道自己的长度。</p>
 
+<h4>8.1.2.2 Pipelining</h4>
 
-
-
-
-
-
-Fielding, et al.            Standards Track                    [Page 45]
-
-RFC 2616                        HTTP/1.1                       June 1999
-
-
-8.1.2.2 Pipelining
-
-   A client that supports persistent connections MAY "pipeline" its
+<p>A client that supports persistent connections MAY "pipeline" its
    requests (i.e., send multiple requests without waiting for each
    response). A server MUST send its responses to those requests in the
-   same order that the requests were received.
+   same order that the requests were received.</p>
 
-   Clients which assume persistent connections and pipeline immediately
+   <p class="cn">客户端不必等收到响应再发送下一个请求。</p>
+
+   <p class="cn">服务端必须按照接收请求的顺序, 依次给予响应报文。</p>
+
+   <p>Clients which assume persistent connections and pipeline immediately
    after connection establishment SHOULD be prepared to retry their
    connection if the first pipelined attempt fails. If a client does
    such a retry, it MUST NOT pipeline before it knows the connection is
    persistent. Clients MUST also be prepared to resend their requests if
    the server closes the connection before sending all of the
-   corresponding responses.
+   corresponding responses.</p>
 
-   Clients SHOULD NOT pipeline requests using non-idempotent methods or
+   <p>Clients SHOULD NOT pipeline requests using non-idempotent methods or
    non-idempotent sequences of methods (see section 9.1.2). Otherwise, a
    premature termination of the transport connection could lead to
    indeterminate results. A client wishing to send a non-idempotent
    request SHOULD wait to send that request until it has received the
-   response status for the previous request.
+   response status for the previous request.</p>
 
-8.1.3 Proxy Servers
+<h3>8.1.3 Proxy Servers</h3>
 
-   It is especially important that proxies correctly implement the
+<p class="cn"><strong>代理服务器</strong></p>
+
+<p>It is especially important that proxies correctly implement the
    properties of the Connection header field as specified in section
-   14.10.
+   14.10.</p>
 
-   The proxy server MUST signal persistent connections separately with
+   <p>The proxy server MUST signal persistent connections separately with
    its clients and the origin servers (or other proxy servers) that it
    connects to. Each persistent connection applies to only one transport
-   link.
+   link.</p>
 
-   A proxy server MUST NOT establish a HTTP/1.1 persistent connection
+   <p>A proxy server MUST NOT establish a HTTP/1.1 persistent connection
    with an HTTP/1.0 client (but see RFC 2068 [33] for information and
    discussion of the problems with the Keep-Alive header implemented by
-   many HTTP/1.0 clients).
+   many HTTP/1.0 clients).</p>
 
-8.1.4 Practical Considerations
+<h3>8.1.4 Practical Considerations</h3>
 
-   Servers will usually have some time-out value beyond which they will
+<p>Servers will usually have some time-out value beyond which they will
    no longer maintain an inactive connection. Proxy servers might make
    this a higher value since it is likely that the client will be making
    more connections through the same server. The use of persistent
    connections places no requirements on the length (or existence) of
-   this time-out for either the client or the server.
+   this time-out for either the client or the server.</p>
 
-
-
-
-
-Fielding, et al.            Standards Track                    [Page 46]
-
-RFC 2616                        HTTP/1.1                       June 1999
-
-
-   When a client or server wishes to time-out it SHOULD issue a graceful
+   <p>When a client or server wishes to time-out it SHOULD issue a graceful
    close on the transport connection. Clients and servers SHOULD both
    constantly watch for the other side of the transport close, and
    respond to it as appropriate. If a client or server does not detect
    the other side's close promptly it could cause unnecessary resource
-   drain on the network.
+   drain on the network.</p>
 
-   A client, server, or proxy MAY close the transport connection at any
+   <p>A client, server, or proxy MAY close the transport connection at any
    time. For example, a client might have started to send a new request
    at the same time that the server has decided to close the "idle"
    connection. From the server's point of view, the connection is being
    closed while it was idle, but from the client's point of view, a
-   request is in progress.
+   request is in progress.</p>
 
-   This means that clients, servers, and proxies MUST be able to recover
+   <p>This means that clients, servers, and proxies MUST be able to recover
    from asynchronous close events. Client software SHOULD reopen the
    transport connection and retransmit the aborted sequence of requests
    without user interaction so long as the request sequence is
@@ -190,40 +199,31 @@ RFC 2616                        HTTP/1.1                       June 1999
    human operator the choice of retrying the request(s). Confirmation by
    user-agent software with semantic understanding of the application
    MAY substitute for user confirmation. The automatic retry SHOULD NOT
-   be repeated if the second sequence of requests fails.
+   be repeated if the second sequence of requests fails.</p>
 
-   Servers SHOULD always respond to at least one request per connection,
+   <p>Servers SHOULD always respond to at least one request per connection,
    if at all possible. Servers SHOULD NOT close a connection in the
    middle of transmitting a response, unless a network or client failure
-   is suspected.
+   is suspected.</p>
 
-   Clients that use persistent connections SHOULD limit the number of
+   <p>Clients that use persistent connections SHOULD limit the number of
    simultaneous connections that they maintain to a given server. A
    single-user client SHOULD NOT maintain more than 2 connections with
    any server or proxy. A proxy SHOULD use up to 2*N connections to
    another server or proxy, where N is the number of simultaneously
    active users. These guidelines are intended to improve HTTP response
-   times and avoid congestion.
+   times and avoid congestion.</p>
 
-8.2 Message Transmission Requirements
+<h2>8.2 Message Transmission Requirements</h2>
 
-8.2.1 Persistent Connections and Flow Control
+<h3>8.2.1 Persistent Connections and Flow Control</h3>
 
    HTTP/1.1 servers SHOULD maintain persistent connections and use TCP's
    flow control mechanisms to resolve temporary overloads, rather than
    terminating connections with the expectation that clients will retry.
    The latter technique can exacerbate network congestion.
 
-
-
-
-
-Fielding, et al.            Standards Track                    [Page 47]
-
-RFC 2616                        HTTP/1.1                       June 1999
-
-
-8.2.2 Monitoring Connections for Error Status Messages
+<h3>8.2.2 Monitoring Connections for Error Status Messages</h3>
 
    An HTTP/1.1 (or later) client sending a message-body SHOULD monitor
    the network connection for an error status while it is transmitting
@@ -234,7 +234,7 @@ RFC 2616                        HTTP/1.1                       June 1999
    If the body was preceded by a Content-Length header, the client MUST
    close the connection.
 
-8.2.3 Use of the 100 (Continue) Status
+<h3>8.2.3 Use of the 100 (Continue) Status</h3>
 
    The purpose of the 100 (Continue) status (see section 10.1.1) is to
    allow a client that is sending a request message with a request body
@@ -271,14 +271,6 @@ RFC 2616                        HTTP/1.1                       June 1999
         origin server MUST NOT wait for the request body before sending
         the 100 (Continue) response. If it responds with a final status
         code, it MAY close the transport connection or it MAY continue
-
-
-
-Fielding, et al.            Standards Track                    [Page 48]
-
-RFC 2616                        HTTP/1.1                       June 1999
-
-
         to read and discard the rest of the request.  It MUST NOT
         perform the requested method if it returns a final status code.
 
@@ -326,15 +318,6 @@ RFC 2616                        HTTP/1.1                       June 1999
         server, it MUST forward the request, including the Expect header
         field.
 
-
-
-
-
-Fielding, et al.            Standards Track                    [Page 49]
-
-RFC 2616                        HTTP/1.1                       June 1999
-
-
       - If the proxy knows that the version of the next-hop server is
         HTTP/1.0 or lower, it MUST NOT forward the request, and it MUST
         respond with a 417 (Expectation Failed) status.
@@ -348,16 +331,20 @@ RFC 2616                        HTTP/1.1                       June 1999
         the "100-continue" expectation. This requirement overrides the
         general rule for forwarding of 1xx responses (see section 10.1).
 
-8.2.4 Client Behavior if Server Prematurely Closes Connection
+<h3>8.2.4 Client Behavior if Server Prematurely Closes Connection</h3>
 
-   If an HTTP/1.1 client sends a request which includes a request body,
+<p class="cn">当服务器过早地断开连接时, 客户端应当如何应对？</p>
+
+<p class="cn">prematurely: 过早地</p>
+
+<p>If an HTTP/1.1 client sends a request which includes a request body,
    but which does not include an Expect request-header field with the
    "100-continue" expectation, and if the client is not directly
    connected to an HTTP/1.1 origin server, and if the client sees the
    connection close before receiving any status from the server, the
    client SHOULD retry the request.  If the client does retry this
    request, it MAY use the following "binary exponential backoff"
-   algorithm to be assured of obtaining a reliable response:
+   algorithm to be assured of obtaining a reliable response:</p>
 
       1. Initiate a new connection to the server
 
@@ -382,19 +369,13 @@ RFC 2616                        HTTP/1.1                       June 1999
          response is received, or the user becomes impatient and
          terminates the retry process.
 
+     <p>If at any point an error status is received, the client</p>
 
+     <div class="sub">
 
+         <p>- SHOULD NOT continue and</p>
 
-
-Fielding, et al.            Standards Track                    [Page 50]
-
-RFC 2616                        HTTP/1.1                       June 1999
-
-
-   If at any point an error status is received, the client
-
-      - SHOULD NOT continue and
-
-      - SHOULD close the connection if it has not completed sending the
-        request message.
+         <p>- SHOULD close the connection if it has not completed sending the
+         request message.</p>
+    </div>
 
