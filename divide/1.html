@@ -69,6 +69,8 @@
 <p>This specification uses a number of terms to refer to the roles
    played by participants in, and objects of, the HTTP communication.</p>
 
+   <p class="cn">participant: 参与者, 参加者</p>
+
 <dl>
     <dt>connection</dt>
     <dd>A transport layer virtual circuit established between two programs
@@ -81,6 +83,9 @@
       sequence of octets matching the syntax defined in section 4 and
       transmitted via the connection.</dd>
   </dl>
+
+
+  <p class="cn">message 报文。是 HTTP 通信地基本单元。</p>
 
   <dl>
       <dt>request</dt>
@@ -104,9 +109,16 @@
       <dt>entity</dt>
       <dd>The information transferred as the payload of a request or
       response. An entity consists of metainformation in the form of
-      entity-header fields and content in the form of an entity-body, as
-      described in section 7.</dd>
+      <strong>entity-header fields</strong> and content in the form
+      of an <strong>entity-body</strong>, as described in section 7.</dd>
   </dl>
+
+  <p class="cn">entity 实体。除了实体主体, 实体首部字段中包含的元信息也是实体的一部分。</p>
+
+  <p class="cn">
+  payload: 有效荷载<br />
+  in the form of: 以...形式<br />
+  </p>
 
   <dl>
       <dt>representation</dt>
@@ -138,6 +150,8 @@
       requests.</dd>
   </dl>
 
+  <p class="cn">client 客户端。</p>
+
   <dl>
       <dt>user agent</dt>
       <dd>The client which initiates a request. These are often browsers,
@@ -147,19 +161,27 @@
   <dl>
       <dt>server</dt>
       <dd>An application program that accepts connections in order to
-      service requests by sending back responses. Any given program may
+      service requests by sending back responses.</dd>
+  </dl>
+
+  <p>Any given program may
       be capable of being both a client and a server; our use of these
       terms refers only to the role being performed by the program for a
       particular connection, rather than to the program's capabilities
       in general. Likewise, any server may act as an origin server,
       proxy, gateway, or tunnel, switching behavior based on the nature
-      of each request.</dd>
-  </dl>
+      of each request.</p>
 
   <dl>
       <dt>origin server</dt>
       <dd>The server on which a given resource resides or is to be created.</dd>
   </dl>
+
+  <p class="cn">它是资源所在的地方, 或者被创造的地方, 即资源产生的源头。</p>
+
+  <p class="cn">
+  reside: 定居于
+  </p>
 
   <dl>
       <dt>proxy</dt>
@@ -195,6 +217,8 @@
       initiated by an HTTP request. The tunnel ceases to exist when both
       ends of the relayed connections are closed.</dd>
   </dl>
+
+  <p class="cn">ceases to exist: 不复存在</p>
 
   <dl>
       <dt>cache</dt>
@@ -254,10 +278,14 @@
       lifetime.</dd>
   </dl>
 
+  <p class="cn">fresh: 新鲜的</p>
+
   <dl>
       <dt>stale</dt>
       <dd>A response is stale if its age has passed its freshness lifetime.</dd>
   </dl>
+
+  <p class="cn">stale: 不新鲜的, 与 fresh 意义相反。</p>
 
   <dl>
       <dt>semantically transparent</dt>
@@ -283,12 +311,27 @@
       messages flow from upstream to downstream.</dd>
   </dl>
 
+  <p class="cn">上下游的判断标准是消息的流向：发出报文的一方总是上游, 接收报文的一方总是下游。</p>
+
+  <p class="cn">
+  upstream: 上游<br />
+  downstream: 下游<br />
+  </p>
+
   <dl>
       <dt>inbound/outbound</dt>
       <dd>Inbound and outbound refer to the request and response paths for
       messages: "inbound" means "traveling toward the origin server",
       and "outbound" means "traveling toward the user agent"</dd>
   </dl>
+
+  <p class="cn">这里是以服务器的视角来说的。</p>
+
+  <p class="cn">
+  inbound: 归航的<br />
+  outbound: 出港的<br />
+  travel: 旅行<br />
+  </p>
 
 <h2 id="section-4">1.4 Overall Operation</h2>
 
