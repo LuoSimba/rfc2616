@@ -3,12 +3,21 @@
 a { text-decoration: none; }
 p { text-indent: 1em; }
 p.cn { color: gray; }
-body { max-width: 600px; margin: 8px auto; }
+body { max-width: 600px; margin: 2em auto; }
 
 div.url {
     background: #eee;
     padding: 1em;
     margin: 1em;
     font-family: monospace;
+}
+
+div.sub {
+    margin: 1em 1em 2em;
+}
+
+/* is this text wrong? */
+span.error {
+    color: red;
 }
 
